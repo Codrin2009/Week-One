@@ -1,0 +1,3307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Week One</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,700&family=Figtree:wght@400;500;600;700;800&display=swap">
+<style>
+/* Week One: an evening walk for two. The park sits on top, the card of the moment right under it, so one
+   phone screen shows both. One world on purpose: dusk in the park, lanterns just lit, cards on cream paper. */
+:root {
+  --night: #131027;
+  --surface: #1f1a3b;
+  --surface2: #2b2550;
+  --line: #40386b;
+  --text: #f7efe9;
+  --muted: #b5aad0;
+  --rose: #ff7f9f;
+  --rose-ink: #2a0f1b;
+  --lantern: #ffc46b;
+  --paper: #fff5e8;
+  --paper2: #f4e4cf;
+  --ink: #241a36;
+  --ink-soft: #6a5a7c;
+  --win: #a6e88a;
+  --ec: #ff7f9f;
+  --king: #5a36a8;
+  --queen: #d6336c;
+  --display: 'Fraunces', 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+  --body: 'Figtree', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  --ch: 270px;
+  --sh: 270px;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  background: var(--night);
+  background-image: radial-gradient(120% 60% at 50% 0%, #2a1f58 0%, rgba(42, 31, 88, 0) 70%), radial-gradient(90% 40% at 50% 100%, rgba(255, 127, 159, .12) 0%, rgba(255, 127, 159, 0) 70%);
+  background-repeat: no-repeat;
+  min-height: 100%;
+  color: var(--text);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  padding-top: calc(12px + env(safe-area-inset-top, 0px));
+  padding-bottom: calc(28px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+button, input { font: inherit; color: inherit; -webkit-appearance: none; appearance: none; touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+:focus-visible { outline: 3px solid var(--lantern); outline-offset: 2px; }
+[hidden] { display: none !important; }
+
+.wrap { max-width: 440px; margin: 0 auto; display: grid; gap: 12px; }
+.wrap.is-play { --ch: 330px; --sh: 330px; }
+.wrap.is-play.card-up { --sh: 176px; }
+.wrap.flatview .parkbox { order: 9; }
+.wrap.flatview .foot { order: 10; }
+
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; }
+.top h1 { font-family: var(--display); font-weight: 700; font-size: 38px; line-height: 1; letter-spacing: -0.02em; margin: 0; font-variation-settings: "opsz" 144; }
+.top h1 i { font-style: italic; font-weight: 500; color: var(--lantern); }
+.top p { margin: 6px 0 0; color: var(--muted); font-size: 14px; }
+.is-play .top h1 { font-size: 24px; }
+.is-play .top p { display: none; }
+.clockbox { display: flex; align-items: center; gap: 8px; flex: none; }
+.clockbox:empty { display: none; }
+.ck { font-family: var(--body); font-weight: 800; font-size: 20px; line-height: 1; font-variant-numeric: tabular-nums; padding: 9px 10px; border-radius: 14px; background: var(--surface); border: 1.5px solid var(--line); }
+.ck.paused { color: var(--muted); }
+.pausebtn { min-height: 40px; padding: 4px 11px; border-radius: 999px; border: 1.5px solid var(--line); background: transparent; font-weight: 700; font-size: 13px; }
+
+.score { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.score:empty { display: none; }
+.chip { position: relative; display: grid; grid-template-columns: auto 1fr auto; grid-template-areas: "av cn ch" "av lap ch"; align-items: center; column-gap: 8px; padding: 8px 10px; background: var(--surface); border: 2px solid var(--line); border-radius: 16px; min-width: 0; transition: border-color .25s, background .25s; }
+.chip.on { border-color: var(--lantern); background: #2a2247; }
+.chip.pop { animation: pop .45s ease-out; }
+@keyframes pop { 0% { transform: scale(1); } 35% { transform: scale(1.06); } 100% { transform: scale(1); } }
+.av { grid-area: av; flex: none; width: 30px; height: 30px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; border: 2px solid #fff; color: #fff; }
+.av.king { background: var(--king); }
+.av.queen { background: var(--queen); }
+.cn { grid-area: cn; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 700; font-size: 15px; line-height: 1.2; }
+.ch { grid-area: ch; display: flex; align-items: center; gap: 4px; color: var(--rose); font-size: 18px; font-weight: 800; }
+.ch b { color: var(--text); font-variant-numeric: tabular-nums; }
+.lapn { grid-area: lap; font-size: 12px; color: var(--muted); line-height: 1.2; }
+.chip.on .lapn { color: var(--lantern); }
+.hrt { width: 18px; height: 18px; display: inline-block; vertical-align: -3px; }
+.fly { position: absolute; bottom: 40%; color: var(--rose); pointer-events: none; animation: fly 1.4s ease-out both; }
+.fly .hrt { width: 20px; height: 20px; }
+@keyframes fly { 0% { transform: translateY(0) scale(.5); opacity: 0; } 15% { opacity: 1; } 100% { transform: translateY(-78px) scale(1.25) rotate(14deg); opacity: 0; } }
+
+.parkbox { display: grid; gap: 6px; min-width: 0; }
+.stage { position: relative; width: 100%; height: var(--sh); border-radius: 24px; overflow: hidden; border: 1px solid var(--line); background: linear-gradient(#17123a, #4a2f73 55%, #e98a7c); transition: height .35s cubic-bezier(.2, .7, .2, 1); }
+.stage::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06), inset 0 -40px 50px -30px rgba(19, 16, 39, .65), inset 0 30px 40px -30px rgba(19, 16, 39, .5); }
+.stagein { position: absolute; left: 0; right: 0; top: 50%; height: var(--ch); transform: translateY(-50%); }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: pan-y; }
+.stagebtn { position: absolute; right: 10px; bottom: 10px; z-index: 2; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .25); background: rgba(19, 16, 39, .6); display: none; align-items: center; justify-content: center; }
+.stagebtn svg { width: 18px; height: 18px; }
+.is-play .stagebtn { display: flex; }
+.viewopt { justify-self: end; max-width: 100%; }
+.viewopt summary { list-style: none; min-height: 32px; display: inline-flex; align-items: center; gap: 6px; padding: 2px 4px; font-size: 13px; font-weight: 700; color: var(--muted); cursor: pointer; float: right; }
+.viewopt summary::-webkit-details-marker { display: none; }
+.viewopt summary svg { width: 15px; height: 15px; }
+.viewopt[open] summary { color: var(--text); }
+.viewopt .seg { clear: both; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.views:empty { display: none; }
+
+.evb { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 10px; padding: 9px 14px; border-radius: 16px; background: var(--surface); border: 1.5px solid var(--ec); border-left-width: 6px; font-size: 14px; }
+.evb b { font-family: var(--display); font-size: 17px; font-weight: 600; }
+.evb span { color: var(--muted); }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 24px; padding: 16px; display: grid; gap: 14px; align-content: start; min-height: 200px; }
+.panel > * { margin: 0; min-width: 0; }
+.note { font-size: 13px; color: var(--muted); text-align: center; }
+.eyebrow { font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--lantern); margin: 0; }
+.big { font-family: var(--display); font-weight: 600; font-size: 28px; line-height: 1.12; letter-spacing: -0.01em; text-wrap: balance; margin: 0; }
+.muted, .hint { color: var(--muted); font-size: 15px; margin: 0; }
+.hint { font-size: 13px; }
+.hint.strong { color: var(--lantern); font-weight: 700; }
+.center { text-align: center; }
+.wait { color: var(--muted); font-size: 15px; text-align: center; padding: 4px 0; }
+
+.now { display: flex; align-items: center; gap: 11px; padding: 10px 12px; border-radius: 16px; background: var(--surface2); border: 1.5px solid var(--line); }
+.now.mine { border-color: var(--rose); background: rgba(255, 127, 159, .13); }
+.nowt { display: grid; gap: 1px; min-width: 0; }
+.nowt b { font-size: 16px; font-weight: 800; line-height: 1.25; }
+.nowt span { font-size: 14px; color: var(--muted); line-height: 1.3; }
+.now.mine .nowt span { color: #e9d9e6; }
+
+.qcard { position: relative; background: var(--paper); color: var(--ink); border-radius: 20px; box-shadow: 0 2px 0 #e3cfb6, 0 6px 0 -1px #cdb89d, 0 16px 30px rgba(0, 0, 0, .35); margin-bottom: 6px; }
+.qcard.deal { animation: deal .42s cubic-bezier(.2, .8, .25, 1) both; }
+@keyframes deal { from { transform: translateY(22px) rotate(-2.2deg) scale(.97); opacity: .2; } to { transform: none; opacity: 1; } }
+.qhead { display: flex; align-items: center; gap: 8px; padding: 9px 14px; background: var(--tc); border-radius: 20px 20px 0 0; font-size: 13px; }
+.qhead b { font-weight: 800; letter-spacing: .02em; }
+.qhead span { margin-left: auto; font-weight: 600; opacity: .72; text-align: right; }
+.qico { width: 20px; height: 20px; flex: none; }
+.qbody { padding: 18px 18px 20px; display: grid; gap: 12px; }
+.qbody > * { margin: 0; min-width: 0; }
+.q { font-family: var(--display); font-weight: 600; font-size: 24px; line-height: 1.22; text-wrap: balance; font-variation-settings: "opsz" 48; }
+.q.small { font-size: 18px; }
+.q .or { font-style: italic; font-weight: 500; color: var(--ink-soft); font-size: .8em; padding: 0 .15em; }
+.qfollow { font-size: 15px; line-height: 1.35; color: var(--ink-soft); padding-top: 10px; border-top: 1.5px dashed #dcc7ac; }
+.qfollow b { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink); margin-right: 6px; }
+.prize { margin: 0; padding: 12px 14px; border-radius: 14px; background: var(--lantern); color: var(--ink); font-family: var(--display); font-weight: 600; font-size: 19px; text-align: center; display: grid; gap: 2px; }
+.prize span { font-family: var(--body); font-size: 11px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.field input:disabled { opacity: .6; }
+.qsub { font-size: 12px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
+.qfoot { display: flex; flex-wrap: wrap; gap: 6px; padding: 0 18px 16px; }
+.qtag { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 999px; background: var(--paper2); color: var(--ink-soft); }
+.qtag.dbl { background: var(--ink); color: var(--lantern); }
+
+.steps { margin: 0; padding: 0; list-style: none; counter-reset: st; display: grid; gap: 6px; }
+.steps li { counter-increment: st; display: grid; grid-template-columns: 22px 1fr; gap: 9px; align-items: start; font-size: 14px; color: var(--muted); }
+.steps li::before { content: counter(st); width: 22px; height: 22px; border-radius: 50%; background: var(--surface2); border: 1px solid var(--line); color: var(--text); font-size: 12px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+.pill { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 12px; font-weight: 800; letter-spacing: 0.02em; color: var(--ink); white-space: nowrap; }
+.pico { width: 13px; height: 13px; }
+.evcard { border-left: 6px solid var(--ec); padding-left: 14px; display: grid; gap: 8px; }
+.evcard > * { margin: 0; }
+.evtxt { font-family: var(--display); font-size: 19px; line-height: 1.3; font-weight: 500; }
+.rule { font-weight: 800; font-size: 15px; color: var(--ec); }
+.verdict { font-weight: 800; font-size: 16px; margin: 0; }
+.verdict.win { color: var(--win); }
+
+.btn { min-height: 54px; padding: 12px 18px; border: 0; border-radius: 16px; background: var(--rose); color: var(--rose-ink); font-weight: 800; font-size: 17px; width: 100%; line-height: 1.2; }
+.btn:active { transform: scale(0.98); }
+.btn.ghost { background: transparent; color: var(--text); border: 1.5px solid var(--line); font-weight: 700; }
+.btn.link { background: none; border: 0; min-height: 44px; color: var(--muted); font-weight: 700; font-size: 14px; text-decoration: underline; text-underline-offset: 3px; width: auto; padding: 8px 4px; }
+.btns { display: grid; gap: 10px; }
+.row2 { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.row2:empty { display: none; }
+
+.opts { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.opt { min-height: 62px; padding: 12px; border-radius: 16px; border: 1.5px solid var(--line); background: var(--surface2); font-weight: 700; font-size: 16px; text-align: center; line-height: 1.2; overflow-wrap: anywhere; }
+.opt:active { transform: scale(0.98); border-color: var(--rose); }
+
+.dice { display: flex; justify-content: center; gap: 14px; margin: 2px auto; padding: 0; border: 0; background: none; }
+.d { width: 84px; height: 84px; border-radius: 22px; background: var(--paper); color: var(--ink); font-family: var(--display); font-weight: 700; font-size: 44px; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 0 #cdb89d, 0 14px 24px rgba(0, 0, 0, .3); }
+button.dice .d { animation: nudge 2.6s ease-in-out infinite; }
+button.dice .d + .d { animation-delay: .18s; }
+@keyframes nudge { 0%, 78%, 100% { transform: none; } 84% { transform: translateY(-5px) rotate(-4deg); } 92% { transform: translateY(0) rotate(2deg); } }
+button.dice:active .d { transform: translateY(3px); box-shadow: 0 3px 0 #cdb89d; animation: none; }
+.dice.ghost { opacity: 0.45; }
+.dice.ghost .d { box-shadow: none; }
+
+.rv { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.rv > div { background: var(--paper2); border-radius: 14px; padding: 10px 12px; display: grid; gap: 3px; min-width: 0; border: 2px solid transparent; }
+.rv > div.hit { border-color: #4f9d5a; background: #e4f1d6; }
+.rv .who { font-size: 12px; color: var(--ink-soft); font-weight: 700; }
+.rv .ans { font-family: var(--display); font-weight: 700; font-size: 19px; line-height: 1.15; overflow-wrap: anywhere; }
+
+.field { display: grid; gap: 6px; }
+.lab { font-size: 13px; font-weight: 700; color: var(--muted); }
+.field input, .curow input { min-height: 52px; padding: 10px 14px; border-radius: 14px; border: 1.5px solid var(--line); background: var(--night); font-size: 16px; width: 100%; min-width: 0; }
+.two { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.slots { display: grid; gap: 8px; }
+.slot { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 14px; background: var(--surface2); font-weight: 700; }
+.slot .role { margin-left: auto; font-size: 13px; color: var(--muted); font-weight: 600; }
+.slot.empty { color: var(--muted); font-weight: 500; border: 1.5px dashed var(--line); background: transparent; }
+.warn { background: #4a2030; border: 1px solid #8d3a55; border-radius: 14px; padding: 10px 12px; font-size: 14px; }
+.curow { display: flex; gap: 8px; }
+.culist { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.culist li { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 12px; border-radius: 12px; background: var(--surface2); font-size: 14px; }
+.culist li span { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.cux { min-height: 36px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: transparent; font-size: 12px; font-weight: 700; color: var(--muted); }
+.howbox { display: grid; gap: 10px; padding: 14px; border-radius: 18px; background: var(--surface2); }
+.how5 { margin: 0; padding: 0; list-style: none; counter-reset: hw; display: grid; gap: 10px; }
+.how5 li { counter-increment: hw; display: grid; grid-template-columns: 26px 1fr; column-gap: 10px; font-size: 14px; }
+.how5 li::before { content: counter(hw); grid-row: 1 / span 2; width: 26px; height: 26px; border-radius: 50%; background: var(--lantern); color: var(--ink); font-weight: 800; font-size: 13px; display: flex; align-items: center; justify-content: center; }
+.how5 b { font-size: 15px; }
+.how5 span { color: var(--muted); }
+
+.bing { font-family: var(--display); font-weight: 700; font-style: italic; font-size: 68px; line-height: 1; color: var(--lantern); text-align: center; margin: 0; }
+.final { display: grid; gap: 8px; }
+.final .row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: var(--surface2); border-radius: 14px; font-weight: 700; border: 2px solid transparent; }
+.final .row .lapn { margin-left: auto; }
+.final .row.win { border-color: var(--lantern); }
+
+.park { display: block; width: 100%; height: auto; border-radius: 22px; }
+.tk { transition: transform 0.15s linear; }
+.ov { opacity: 0; transition: opacity 0.6s; pointer-events: none; }
+.ev-rain .ov-rain, .ev-sun .ov-sun, .ev-parade .ov-parade, .ev-picnic .ov-picnic, .ev-boat .ov-boat, .ev-fire .ov-fire { opacity: 1; }
+.ev-fire .ov-fire { animation: fpop 1.6s ease-out infinite; transform-origin: 180px 180px; }
+@keyframes fpop { 0% { opacity: 0.2; } 40% { opacity: 1; } 100% { opacity: 0.35; } }
+
+.seg { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; }
+.seg:empty { display: none; }
+.seglab { font-size: 12px; font-weight: 800; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); margin-right: 4px; }
+.seglab.sp { margin-left: 8px; }
+.segb { min-height: 40px; padding: 6px 14px; border-radius: 999px; border: 1.5px solid var(--line); background: transparent; color: var(--text); font-weight: 700; font-size: 14px; }
+.segb.on { background: var(--lantern); border-color: var(--lantern); color: var(--ink); }
+.segb:disabled { opacity: 0.4; }
+.hintx { flex-basis: 100%; font-size: 12px; color: var(--muted); }
+
+.legend { display: grid; gap: 10px; }
+.lg { display: grid; grid-template-columns: 112px 1fr; gap: 10px; align-items: start; font-size: 14px; color: var(--muted); }
+.lg .pill { justify-self: start; }
+
+.foot { display: flex; flex-wrap: wrap; align-items: center; gap: 0 14px; color: var(--muted); font-size: 13px; }
+.foot .mode { margin-left: auto; }
+.foot:empty { display: none; }
+
+.toast { position: fixed; left: 50%; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); background: var(--paper); color: var(--ink); padding: 10px 16px; border-radius: 999px; font-weight: 700; font-size: 14px; max-width: calc(100vw - 32px); opacity: 0; pointer-events: none; transition: opacity 0.2s; z-index: 40; text-align: center; }
+.toast.show { opacity: 1; }
+
+.topr { display: flex; align-items: center; gap: 8px; flex: none; }
+.chatbtn { position: relative; flex: none; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--rose); color: var(--rose-ink); display: flex; align-items: center; justify-content: center; }
+.chatbtn svg { width: 22px; height: 22px; }
+.badge { position: absolute; top: -4px; right: -4px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #fff; color: var(--rose-ink); font-weight: 800; font-size: 12px; display: flex; align-items: center; justify-content: center; border: 2px solid var(--night); }
+.chat { position: fixed; left: 0; right: 0; bottom: 0; z-index: 30; max-width: 480px; margin: 0 auto; height: min(70vh, 560px); display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-bottom: 0; border-radius: 22px 22px 0 0; box-shadow: 0 -10px 30px rgba(0,0,0,.5); padding-bottom: env(safe-area-inset-bottom, 0px); }
+.chath { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 8px 18px; font-family: var(--display); font-size: 20px; }
+.chatx { width: 44px; height: 44px; border-radius: 50%; border: 0; background: transparent; display: flex; align-items: center; justify-content: center; }
+.chatx svg { width: 22px; height: 22px; }
+.chatlist { flex: 1; overflow-y: auto; padding: 4px 16px 10px; display: flex; flex-direction: column; gap: 8px; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.helpbody { flex: 1; overflow-y: auto; padding: 4px 18px 22px; display: grid; gap: 14px; align-content: start; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.chatempty { margin: auto; color: var(--muted); font-size: 14px; }
+.msg { max-width: 80%; padding: 8px 12px; border-radius: 18px; display: grid; gap: 2px; overflow-wrap: anywhere; }
+.msg.me { align-self: flex-end; background: var(--rose); color: var(--rose-ink); border-bottom-right-radius: 6px; }
+.msg.them { align-self: flex-start; background: var(--surface2); border-bottom-left-radius: 6px; }
+.mn { font-size: 11px; font-weight: 700; color: var(--muted); }
+.mt { font-size: 16px; line-height: 1.3; }
+.mm { font-size: 10px; opacity: .6; justify-self: end; }
+.chatform { display: flex; gap: 8px; padding: 8px 12px 12px; border-top: 1px solid var(--line); }
+.chatform input { flex: 1; min-width: 0; min-height: 48px; padding: 8px 16px; border-radius: 999px; border: 1.5px solid var(--line); background: var(--night); font-size: 16px; }
+.send { flex: none; min-height: 48px; padding: 0 18px; border: 0; border-radius: 14px; background: var(--rose); color: var(--rose-ink); font-weight: 800; font-size: 16px; }
+.chatform .send { border-radius: 999px; }
+@media (max-width: 360px) {
+  .q { font-size: 21px; }
+  .two { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .toast, .tk, .ov, .stage, .chip { transition: none; }
+  .ev-fire .ov-fire, .qcard.deal, button.dice .d, .chip.pop, .fly { animation: none; }
+  .btn:active, .opt:active, button.dice:active .d { transform: none; }
+}
+</style>
+</head>
+<body>
+<div id="wrap" class="wrap is-lobby">
+  <header class="top">
+    <div class="ttl">
+      <h1>Week <i>One</i></h1>
+      <p>An evening walk on a heart-shaped island, for two.</p>
+    </div>
+    <div class="topr">
+      <div id="clock" class="clockbox"></div>
+      <button id="chatBtn" class="chatbtn" data-act="chat" hidden aria-label="Open chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M4 4h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H9l-5 4v-4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg><span id="chatBadge" class="badge" hidden></span></button>
+    </div>
+  </header>
+  <section id="score" class="score" aria-label="Scoreboard"></section>
+  <section class="parkbox" aria-label="Island">
+    <div id="stage" class="stage" hidden>
+      <div id="stagein" class="stagein"></div>
+      <button id="stageBtn" class="stagebtn" data-act="stage" aria-label="Make the park view bigger or smaller"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M8 21H3v-5M16 21h5v-5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    </div>
+    <div id="board" class="board" hidden></div>
+    <details class="viewopt"><summary><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="16" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="2.2"/><circle cx="8" cy="17" r="2.4" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>View options</summary><div id="views" class="seg views"></div></details>
+  </section>
+  <section id="banner" aria-live="polite"></section>
+  <section id="panel" class="panel" aria-live="polite"></section>
+  <footer id="foot" class="foot"></footer>
+</div>
+<section id="chat" class="chat" hidden role="dialog" aria-label="Chat">
+  <div class="chath"><b>Chat</b><button class="chatx" data-act="chatx" aria-label="Close chat"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button></div>
+  <div id="chatlist" class="chatlist" aria-live="polite"></div>
+  <form id="chatform" class="chatform"><input id="chatIn" type="text" maxlength="280" autocomplete="off" enterkeyhint="send" placeholder="Say something sweet" aria-label="Message"><button class="send" type="submit">Send</button></form>
+</section>
+<section id="help" class="chat" hidden role="dialog" aria-label="How to play">
+  <div class="chath"><b>How to play</b><button class="chatx" data-act="helpx" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/></svg></button></div>
+  <div id="helpbody" class="helpbody"></div>
+</section>
+<div id="toast" class="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function () {
+"use strict";
+
+/* ================= Content: the island, tiles, events ================= */
+
+var FINAL_NOTE = "Whoever ends with more hearts picks the next date.";
+
+var HEART_PATH = "M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z";
+
+/* Tile types: label is short (for the stone), long is for the card header, desc is the one-line rule. */
+var TYPES = {
+  start:  { label: "Gate",       long: "Hackathon Gate",      color: "#efe4f5", desc: "Where it started. Every full lap pays 3 hearts. Land exactly on it for +1 more." },
+  us:     { label: "Our story",  long: "Our Story",           color: "#ff7f9f", desc: "Questions about the two of you. Cards you wrote for each other turn up here." },
+  spark:  { label: "Spark",      long: "Conversation Spark",  color: "#ffd37a", desc: "Questions with an edge. The walker answers first, then the other one." },
+  deep:   { label: "Deep cut",   long: "Deep Cut",            color: "#8aa4ff", desc: "Slower, more honest questions." },
+  memory: { label: "Memory",     long: "Memory Lane",         color: "#ffb08f", desc: "Stories from before you met." },
+  dream:  { label: "Dream",      long: "Dream Walk",          color: "#8fdcff", desc: "Plans and what-ifs, mostly about the two of you." },
+  flirt:  { label: "Flirt",      long: "Little Flirt",        color: "#ffb9d0", desc: "Sweet, and a little bolder than before." },
+  dare:   { label: "Dare",       long: "Mini Dare",           color: "#ffe45e", desc: "Something to do, not to say. The other one judges it." },
+  guess:  { label: "Guess me",   long: "Guess Me",            color: "#c2a4ff", desc: "Guess what your partner will answer. A match earns you a heart." },
+  who:    { label: "Which of us", long: "Which of Us",        color: "#a7f0e4", desc: "You both vote in secret for one of you. Same vote, a heart each." },
+  take:   { label: "Hot take",   long: "Hot Take",            color: "#ff9a6b", desc: "A statement. You both vote agree or disagree in secret. Same vote, a heart each. Different votes, you argue it out." },
+  never:  { label: "Never",      long: "Never Have I Ever",   color: "#d6c2ff", desc: "You both answer in secret. Same answer, a heart each. Whoever has done it tells the story." },
+  tt:     { label: "This/That",  long: "This or That",        color: "#7be0b0", desc: "You both pick in secret. Same pick, a heart each." },
+  wyr:    { label: "Rather",     long: "Would You Rather",    color: "#f5a6e6", desc: "A dilemma with no easy side. Same pick, a heart each." },
+  story:  { label: "Truths",     long: "Two Truths, One Lie", color: "#c8e86a", desc: "Fool your partner for 2 hearts, or they catch the lie for 1." },
+  bench:  { label: "Bench",      long: "Quiet Bench",         color: "#d9c39a", desc: "A calm moment together. A heart each." },
+  gift:   { label: "Gift",       long: "Sweet Words",         color: "#ff8a7a", desc: "Say something kind, collect a heart." },
+  event:  { label: "Surprise",   long: "Island Surprise",     color: "#ffffff", desc: "Starts an island event, or a small challenge you do together." }
+};
+
+/* The island is a heart. You walk up the left shore to the top, cut down through the middle,
+   then up the right shore and down through the middle again. That whole figure is one lap. */
+var HS = 0.48;
+var LEFT = [
+  ["spark", "Hello Corner"], ["tt", "Coin Flip Steps"], ["us", "Forty Onlookers Square"], ["guess", "Poker Face Lane"],
+  ["take", "Soapbox Rock"], ["flirt", "Cherry Lane"], ["dare", "Daredevil Dock"], ["bench", "Willow Bench"],
+  ["deep", "Still Water Cove"], ["wyr", "Fork in the Road"], ["never", "Confession Stump"], ["who", "Mirror Pond"],
+  ["story", "Tall Tale Tower"], ["gift", "Gift Kiosk"], ["memory", "Old Photo Wall"], ["us", "Week One Lawn"],
+  ["dream", "Stargazer Hill"], ["flirt", "Rose Arch"], ["guess", "Riddle Gate"], ["take", "Debate Deck"],
+  ["dare", "Dizzy Meadow"], ["spark", "Lantern Walk"]
+];
+var MID = [
+  ["us", "Garden Door"], ["flirt", "Blush Path"], ["never", "Whisper Grove"], ["who", "Two Swans"],
+  ["gift", "Wishing Well"], ["us", "Rainy Night Bridge"], ["bench", "Umbrella Bench"], ["take", "Hmm Idk Hill"],
+  ["dare", "Seven Seconds Dock"], ["deep", "Firefly Hollow"]
+];
+var RIGHT = [
+  ["dream", "Airport Road"], ["who", "Twin Oaks"], ["memory", "Postcard Pier"], ["wyr", "Split Path"],
+  ["us", "Welcome Back Steps"], ["never", "Secret Cove"], ["guess", "Guessing Gazebo"], ["story", "Storyteller's Stone"],
+  ["flirt", "Moonlit Arch"], ["tt", "Seesaw Lawn"], ["deep", "Deep End"], ["event", "Carnival Corner"],
+  ["spark", "Coffee Cart"], ["take", "Hot Take Hill"], ["gift", "Bouquet Stand"], ["dare", "Dare Tree"],
+  ["us", "Parents' Porch"], ["bench", "Lookout Bench"], ["wyr", "Crossroads Sign"], ["memory", "Scrapbook Shed"],
+  ["who", "Lookout Point"], ["guess", "Lighthouse Steps"]
+];
+
+function heartXY(t) {
+  return [16 * Math.pow(Math.sin(t), 3), 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)];
+}
+function toWorld(p) { return { x: p[0] * HS, z: -(p[1] + 2.5) * HS }; }
+
+/* n points spaced evenly by walking distance along a curve fn(u), u from 0 to 1,
+   leaving a0 clear at the start and a1 clear at the end. */
+function evenly(fn, n, a0, a1) {
+  var fine = 600, pts = [], acc = [0], i;
+  for (i = 0; i <= fine; i++) pts.push(fn(i / fine));
+  for (i = 1; i <= fine; i++) acc.push(acc[i - 1] + Math.hypot(pts[i].x - pts[i - 1].x, pts[i].z - pts[i - 1].z));
+  var out = [], total = acc[fine], j = 0;
+  for (var k = 0; k < n; k++) {
+    var want = a0 + (total - a0 - a1) * k / (n - 1);
+    while (j < fine - 1 && acc[j + 1] < want) j++;
+    var f = (want - acc[j]) / ((acc[j + 1] - acc[j]) || 1);
+    out.push({ x: pts[j].x + (pts[j + 1].x - pts[j].x) * f, z: pts[j].z + (pts[j + 1].z - pts[j].z) * f });
+  }
+  return out;
+}
+
+/* The two ends of the heart are too narrow for three paths side by side, so the shore stones
+   stop short of the tip and of the notch, and the Gate and the Crossing sit a little inland. */
+var TIP = toWorld(heartXY(Math.PI)), NOTCH = toWorld(heartXY(0));
+var GATE = { x: 0, z: TIP.z - 1.0 }, CROSS = { x: 0, z: NOTCH.z + 0.3 };
+var MID_A = CROSS.z + 1.02, MID_B = GATE.z - 1.72;
+function midPoint(u) { return { x: 1.75 * Math.sin(u * Math.PI * 2) * (1 - Math.pow(u, 4)), z: MID_A + (MID_B - MID_A) * u }; }
+function shore(side) { return function (u) { return toWorld(heartXY(Math.PI + side * Math.PI * u)); }; }
+
+/* PH is every stone on the island, once. TILES is the walking order, where the middle stones appear twice. */
+var PH = [], TILES = [];
+(function () {
+  function add(def, pt) { PH.push({ t: def[0], n: def[1], x: pt.x, z: pt.z }); return PH.length - 1; }
+  var gate = add(["start", "Hackathon Gate"], GATE);
+  var lp = evenly(shore(1), LEFT.length, 2.0, 1.95), rp = evenly(shore(-1), RIGHT.length, 2.0, 1.95);
+  var left = LEFT.map(function (d, i) { return add(d, lp[i]); });
+  var notch = add(["event", "Heart's Crossing"], CROSS);
+  var mp = evenly(midPoint, MID.length, 0, 0);
+  var mid = MID.map(function (d, i) { return add(d, mp[i]); });
+  var right = RIGHT.map(function (d, i) { return add(d, rp[i]); });
+  [gate].concat(left, [notch], mid, [gate], right, [notch], mid).forEach(function (ph) {
+    var p = PH[ph];
+    TILES.push({ t: p.t, n: p.n, x: p.x, z: p.z, ph: ph });
+  });
+})();
+var N = TILES.length;
+var LAP_HEARTS = 3;
+
+
+/* Small icons, 24x24, drawn in currentColor. */
+var ICONS = {
+  start: '<path fill="currentColor" d="M4 21V11a8 8 0 0 1 16 0v10h-4V11a4 4 0 0 0-8 0v10z"/>',
+  us: '<path fill="currentColor" d="M12 21l-1.3-1.2C6 15.6 3 12.9 3 9.5 3 6.9 5 5 7.5 5c1.7 0 3.3.9 4.5 2.3C13.2 5.9 14.8 5 16.5 5 19 5 21 6.9 21 9.5c0 3.4-3 6.1-7.7 10.3z"/>',
+  spark: '<path d="M9 9a3 3 0 1 1 4.5 2.6c-1 .6-1.5 1.2-1.5 2.4" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="18.6" r="1.5" fill="currentColor"/>',
+  deep: '<circle cx="12" cy="12" r="3" fill="currentColor"/><circle cx="12" cy="12" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".55"/>',
+  memory: '<rect x="2.5" y="7" width="19" height="13" rx="3" fill="currentColor"/><rect x="8" y="4" width="8" height="4" rx="1.2" fill="currentColor"/><circle cx="12" cy="13.5" r="3.6" fill="#fff" fill-opacity=".9"/><circle cx="12" cy="13.5" r="1.6" fill="currentColor"/>',
+  dream: '<path fill="currentColor" d="M20.5 14.2A8.6 8.6 0 1 1 9.8 3.5a7 7 0 0 0 10.7 10.7z"/><path fill="currentColor" d="M18 3l.8 1.9 1.9.8-1.9.8L18 8.4l-.8-1.9-1.9-.8 1.9-.8z"/>',
+  flirt: '<path d="M12 20.6l-1.2-1.1C6 15.3 3 12.6 3 9.2 3 6.6 5 4.6 7.5 4.6c1.6 0 3.1.8 4.5 2.2 1.4-1.4 2.9-2.2 4.5-2.2C19 4.6 21 6.6 21 9.2c0 3.4-3 6.1-7.8 10.3z" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>',
+  dare: '<path fill="currentColor" d="M13 2L4 14h6l-1 8 9-12h-6z"/>',
+  guess: '<path fill="currentColor" d="M1.5 12S5.5 5 12 5s10.5 7 10.5 7-4 7-10.5 7S1.5 12 1.5 12z"/><circle cx="12" cy="12" r="3.4" fill="#fff" fill-opacity=".92"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/>',
+  who: '<circle cx="8" cy="8" r="3.4" fill="currentColor"/><circle cx="16.8" cy="9" r="2.8" fill="currentColor"/><path fill="currentColor" d="M1.5 20c0-3.6 2.9-6.2 6.5-6.2s6.5 2.6 6.5 6.2zM16 20c0-1.9-.6-3.6-1.7-4.9.8-.5 1.7-.7 2.7-.7 3.1 0 5.5 2.3 5.5 5.6z"/>',
+  take: '<path fill="currentColor" d="M3 10v4h3.2L12 18.6V5.4L6.2 10z"/><path d="M15 9a4.2 4.2 0 0 1 0 6M17.6 6.4a8 8 0 0 1 0 11.2" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+  never: '<circle cx="12" cy="12" r="8.6" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M6.2 6.2l11.6 11.6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>',
+  tt: '<path d="M4 8h13M13 4l4 4-4 4M20 16H7M11 12l-4 4 4 4" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>',
+  wyr: '<path d="M12 4v16M6 20h12M5 7h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="M5 7l-3 7a3 3 0 0 0 6 0zM19 7l-3 7a3 3 0 0 0 6 0z" fill="currentColor"/>',
+  story: '<path fill="currentColor" d="M12 6.5C9.8 5 6.8 4.4 3 4.4v14c3.8 0 6.8.6 9 2.1 2.2-1.5 5.2-2.1 9-2.1v-14c-3.8 0-6.8.6-9 2.1z"/><path d="M12 6.5v14" stroke="#fff" stroke-opacity=".7" stroke-width="1.4"/>',
+  bench: '<rect x="3" y="8" width="18" height="3" rx="1" fill="currentColor"/><rect x="3" y="12.5" width="18" height="3" rx="1" fill="currentColor"/><rect x="5" y="15.5" width="2.2" height="5" fill="currentColor"/><rect x="16.8" y="15.5" width="2.2" height="5" fill="currentColor"/>',
+  gift: '<rect x="3.5" y="10" width="17" height="11" rx="2" fill="currentColor"/><rect x="2.5" y="6.5" width="19" height="4.5" rx="1.2" fill="currentColor"/><path d="M12 6.5V21" stroke="#fff" stroke-opacity=".8" stroke-width="2"/><path d="M12 6.5C9.5 1.5 5.5 4 8 6.5zM12 6.5c2.5-5 6.5-2.5 4 0z" fill="currentColor"/>',
+  event: '<path fill="currentColor" d="M12 2l2.4 7.6L22 12l-7.6 2.4L12 22l-2.4-7.6L2 12l7.6-2.4z"/>'
+};
+
+
+/* Energy modes. Moods: b bright, c calm, f flirty, d deep, p playful, k curious. */
+var ENERGY = {
+  cozy:     { label: "Cozy",     blurb: "Calm questions, gentle dares.", mood: { c: 2, d: 1.2, b: 0.8, p: 0.9 }, maxDare: 2 },
+  balanced: { label: "Balanced", blurb: "A bit of everything.",          mood: {},                               maxDare: 3 },
+  lively:   { label: "Lively",   blurb: "Bright, playful, more dares.",  mood: { b: 1.8, p: 1.8, c: 0.8 },       maxDare: 3 }
+};
+
+/* Island events. Weather and happenings that change which questions turn up. */
+var EVENTS = {
+  rain:   { name: "Rainy Night",      len: 5, color: "#7fb3e6", blurb: "Rain starts to fall over the island, the kind you two already know. Questions go back to that night.", rule: "Bench and Our Story tiles pay double.", end: "The rain clears and the stones shine.", mood: { c: 3, d: 1.4, f: 1.4, b: 0.5, p: 0.6 }, deck: "rain", deckP: 0.45, boost: ["bench", "us"] },
+  sun:    { name: "Golden Hour",      len: 5, color: "#ffcf5c", blurb: "The last sun breaks through and everything glows. Questions turn bright and playful.", rule: "Dares pay double.", end: "The glow fades behind the trees.", mood: { b: 3, p: 2, c: 0.6, d: 0.7 }, deck: "sun", deckP: 0.35, boost: ["dare"] },
+  parade: { name: "Lantern Parade",   len: 5, color: "#ff7f9f", blurb: "A parade of paper lanterns and heart balloons winds around the shore. Everything gets a little more romantic.", rule: "Flirt tiles pay double.", end: "The parade drifts off into the evening.", mood: { f: 4, b: 1.3, k: 0.7 }, deck: "parade", deckP: 0.4, boost: ["flirt"] },
+  picnic: { name: "Picnic Hour",      len: 4, color: "#a6e88a", blurb: "A gingham blanket appears on the meadow. Questions turn to food, taste and small pleasures.", rule: "Spark tiles pay double.", end: "The picnic is packed away.", mood: { k: 2, b: 1.4, c: 1.3 }, deck: "picnic", deckP: 0.35, boost: ["spark"] },
+  boat:   { name: "Rowboat Ride",     len: 4, color: "#8fdcff", blurb: "A little rowboat drifts across the pond. Questions turn to adventures and what comes next.", rule: "Dream tiles pay double.", end: "The rowboat drifts back to shore.", mood: { d: 1.5, b: 1.5 }, deck: "boat", deckP: 0.35, boost: ["dream"] },
+  fire:   { name: "Fireworks Night",  len: 3, color: "#ffe45e", blurb: "Fireworks bloom over the water. Questions turn to celebrating.", rule: "Gift and Memory tiles pay double.", end: "The last firework fades.", mood: { b: 2.5, f: 1.5, d: 1 }, deck: "fire", deckP: 0.45, boost: ["gift", "memory"] }
+};
+
+function pickEvent(last) {
+  var weights = { rain: 3, sun: 2, parade: 2, picnic: 1, boat: 1, fire: 1 }, pool = [], tot = 0;
+  Object.keys(weights).forEach(function (k) { if (k !== last) { pool.push(k); tot += weights[k]; } });
+  var r = Math.random() * tot;
+  for (var i = 0; i < pool.length; i++) { r -= weights[pool[i]]; if (r <= 0) return pool[i]; }
+  return pool[0];
+}
+
+/* Deck rows. talk: [moods, question, follow-up]. dare: [moods, text, energy 1-3]. guess: [moods, prompt, options].
+   tt and wyr: [moods, a, b]. take, never, who: [moods, text]. happen: [moods, title, text].
+   In any text, {p} is the other player's name and {a} is the walker's. IDs come from the row position, so only append. */
+function deck(prefix, rows) {
+  return rows.map(function (r, i) { return { id: prefix + (i + 1), m: r[0], q: r[1], x: r[2] }; });
+}
+
+/* Follow-ups for cards that do not bring their own. Asking one more question is what turns an answer into a conversation. */
+var FOLLOW = [
+  "{p}, ask one follow-up before you answer it yourself.",
+  "{p} asks: what makes you say that?",
+  "{p} asks: when did you first notice that?",
+  "{p} asks for one concrete example.",
+  "{p} guesses what you will say before you say it.",
+  "{p} asks: and how did that feel?"
+];
+
+var DECKS = {
+  us: deck("u2_", [
+    ["f", "The rainy night. Tell it from your side, starting ten minutes before the kiss.", "{p} adds the one detail you left out."],
+    ["f", "Right before our first kiss came a hmm, I don't know. What was really going on in your head at that moment?"],
+    ["fp", "We joked about kissing for a while before it happened. Were you joking, or testing the water?"],
+    ["f", "Seven seconds. What do you remember about them?", "{p} asks: what were you thinking in second eight?"],
+    ["k", "What did you do in the first hour after you got home that rainy night?"],
+    ["kp", "Who did you tell first about the kiss, and what exactly did you say?"],
+    ["f", "How long had you wanted to kiss {p} before that night? Be exact."],
+    ["k", "If it had not rained that night, where do you think our first kiss would have happened?"],
+    ["f", "When did you last want to kiss {p} and did not? What stopped you?"],
+    ["k", "You two met with forty people watching. Describe those first thirty seconds from the inside."],
+    ["p", "What was the hackathon version of {p} like, compared to the one sitting here?"],
+    ["k", "What did you almost text {p} and then delete?", "{p} asks: what would have happened if you had sent it?"],
+    ["p", "What is one thing {p} does that you pretend to find annoying?"],
+    ["d", "When were you last a little jealous? The honest version."],
+    ["k", "What did you think was a red flag about {p} at first, that turned out to be nothing?"],
+    ["k", "What is {p}'s biggest green flag?", "{p} says which one they would have guessed."],
+    ["d", "What are you still a bit shy about around {p}?"],
+    ["d", "What moment made you think: this could be something real?"],
+    ["k", "What did your parents say about {p} after they met? The real version, not the polite one."],
+    ["k", "What scared you most about meeting {p}'s parents?"],
+    ["d", "The week in different countries: what was the hardest moment, and what got you through it?"],
+    ["f", "What do you think {p} still does not know about how much you like them?"],
+    ["d", "What is a fight we will probably have one day, and how do you want us to handle it?"],
+    ["k", "After weeks of playing this game, which answer of {p}'s has stuck with you the most?"],
+    ["f", "What does {p} do that makes you feel picked?"],
+    ["k", "Which of your friends was most suspicious of {p}, and what changed their mind?"],
+    ["c", "What memory of us do you replay when you cannot sleep?"],
+    ["d", "What would you want {p} to do if you went quiet for a whole day?"],
+    ["f", "What is one thing you want to do with {p} that you have been too shy to suggest? Suggest it."],
+    ["f", "Finish it honestly: I knew I was in trouble when {p}..."],
+    ["p", "What do you think is {p}'s favorite thing about you?", "{p} says how close that was."],
+    ["d", "What did you think being in love would feel like, and how does this compare so far?"],
+    ["k", "What is something {p} said in passing that you have never forgotten?"],
+    ["p", "What is the most us thing we do?"],
+    ["b", "Where should we be, and what should we be doing, exactly one year from tonight?"],
+    ["p", "What would hackathon-day you say if they could see this right now?"],
+    ["d", "What is one thing you need from {p} that you have never said out loud?"],
+    ["k", "Name the three moments that built us, in order.", "{p} names the one you missed."],
+    ["f", "What do you want {p} to brag about when they talk about you?"],
+    ["c", "What small thing would make you feel even more loved this week?"],
+    ["b", "What is one thing we should try for the first time this month?", "Pick a day for it before you tap Done."],
+    ["d", "What have we already got better at since week one?"],
+    ["k", "What is something you do differently now because of {p}?"],
+    ["p", "What is your favorite photo of {p}? Show it and defend the choice."],
+    ["d", "What makes this feel different from a crush?"],
+    ["f", "What was the exact moment tonight when {p} looked best?"],
+    ["k", "What is a question you have wanted to ask {p} and have not? Ask it now."],
+    ["d", "What are you most afraid of getting wrong with {p}?"]
+  ]),
+  spark: deck("s2_", [
+    ["p", "What is a small, pointless hill you would die on?", "{p} tries to change your mind in twenty seconds."],
+    ["k", "What is something you were completely wrong about a year ago?"],
+    ["p", "What is your most unpopular opinion that you would actually defend?"],
+    ["k", "What do people assume about you within a minute that is wrong?"],
+    ["p", "What are you weirdly competitive about, and what is the worst thing you did to win?"],
+    ["k", "What is the best decision you made this year that looked like a bad one at the time?"],
+    ["b", "What did you do recently that the twelve-year-old you would be amazed by?"],
+    ["p", "What is the pettiest reason you have ever stopped liking someone?"],
+    ["k", "What do you spend too much time thinking about?"],
+    ["p", "Which rule do you break without feeling guilty at all?"],
+    ["k", "What is a compliment you got once that you still think about?"],
+    ["p", "What would your friends say is the most annoying thing about you? Are they right?"],
+    ["k", "What are you better at than almost everyone you know?"],
+    ["b", "What is the last thing that made you laugh until it hurt? Retell it properly."],
+    ["k", "What is a skill you gave up on that you secretly still want?"],
+    ["p", "What is the most trouble you have talked your way out of?"],
+    ["k", "What is something everyone seems to enjoy that you just do not get?"],
+    ["c", "What do you do when nobody is home that you would never do with someone watching?"],
+    ["p", "If your life had a warning label, what would it say?"],
+    ["k", "What was the last thing you changed your mind about because of another person?"],
+    ["b", "What are you most looking forward to that you have not told anyone yet?"],
+    ["p", "What is a lie you tell often enough that it is basically a habit?"],
+    ["k", "Which teacher or adult got you completely wrong, and how?"],
+    ["p", "What is the dumbest thing you have ever done to impress someone?"],
+    ["k", "What do you wish people asked you about more?"],
+    ["c", "What tiny thing can ruin your mood faster than it should?"],
+    ["p", "You get a billboard in the middle of the city for a week. What goes on it?"],
+    ["k", "What would you do differently if nobody could ever judge you for it?"],
+    ["b", "What is the best night you had this year that did not involve {p}?", "{p} asks: what would I have added to it?"],
+    ["p", "What is your toxic trait, the one you would actually admit to?"],
+    ["k", "What do you believe that you cannot prove?"],
+    ["p", "What is the worst advice you ever gave someone with full confidence?"],
+    ["k", "If you could know the honest answer to one question about yourself, what would you ask?"],
+    ["b", "What is something you are proud of that would sound like nothing to anyone else?"]
+  ]),
+  deep: deck("d2_", [
+    ["d", "What is something you are proud of that you almost never mention?"],
+    ["d", "What have you been working on in yourself lately?"],
+    ["d", "When do you feel most like yourself, and when least?"],
+    ["dc", "What do you need on a bad day: space, a distraction or someone close?", "{p} repeats it back in their own words."],
+    ["d", "What is a fear you have that most people would never guess?"],
+    ["dc", "What did you need to hear as a kid that nobody said?"],
+    ["d", "What compliment do you find hard to believe?"],
+    ["d", "What does trust look like to you in small everyday things?"],
+    ["dc", "How can {p} tell you are not okay before you say a word?"],
+    ["d", "What would you do with your life if you knew you could not fail?"],
+    ["d", "What do you worry people get wrong about you?"],
+    ["d", "What is one thing you never want to become?"],
+    ["dc", "What is something you want to be forgiven for, even by yourself?"],
+    ["d", "What do you find hard to ask for?"],
+    ["d", "What is a dream you keep quiet because it sounds too big?"],
+    ["d", "How do you want to be comforted when words are not helping?"],
+    ["d", "What would you want {p} to do in the first five minutes of a real argument?"],
+    ["d", "What part of yourself did you hide at the start with {p}, and are you still hiding any of it?"],
+    ["d", "What is the difference between how you seem and how you feel?"],
+    ["dc", "When did you last cry, and what was it really about?"],
+    ["d", "What are you afraid {p} will find out about you?"],
+    ["d", "What does it take for you to feel safe with someone?"],
+    ["d", "Which of your parents' habits are you scared of repeating, and which do you hope to?"],
+    ["d", "What do you want more than you let on?"],
+    ["dc", "What is something you carry alone that you would like help with?"],
+    ["d", "What would make you walk away from someone you love?"],
+    ["d", "What is the kindest thing you have ever done that nobody knows about?"],
+    ["d", "What do you think you deserve, honestly?"],
+    ["d", "What was the loneliest you have ever felt, and what ended it?"],
+    ["d", "What would you tell {p} if you were sure it would not change how they see you?"]
+  ]),
+  memory: deck("m2_", [
+    ["p", "What is the most trouble you ever got into, and did you deserve it?"],
+    ["c", "What is a childhood memory that still feels warm?"],
+    ["p", "What story does your family tell about you every single time?"],
+    ["k", "Who was your first crush, and what did you do about it?"],
+    ["p", "What is the most embarrassing thing you did in front of a whole class?"],
+    ["k", "What is a moment you were sure everything was ruined, that turned out fine?"],
+    ["b", "What day would you relive exactly as it was?"],
+    ["p", "What lie did you tell as a kid that got completely out of hand?"],
+    ["k", "What is the first time you remember feeling really proud of yourself?"],
+    ["c", "Who took care of you when you were small in a way you still remember?"],
+    ["p", "What phase did you go through that you hope there are no photos of?"],
+    ["k", "What is the bravest thing you did before you were fifteen?"],
+    ["d", "What is something from your childhood that explains how you are now?"],
+    ["p", "What were you irrationally scared of when you were little?"],
+    ["k", "Which friendship ended that you still think about?"],
+    ["b", "What is the best surprise anyone has ever given you?"],
+    ["p", "What is the worst gift you ever had to pretend to love?"],
+    ["k", "What is the first time you remember your heart being a little broken?"],
+    ["c", "Which summer do you remember best, and why that one?"],
+    ["p", "What did you want to be at five, at ten and at fifteen?"],
+    ["k", "What is a moment you wish someone had filmed?"],
+    ["d", "What is something you saw as a kid that you only understood later?"],
+    ["p", "What is the most ridiculous thing you ever cried about?"],
+    ["k", "What were you doing the day before the hackathon, with no idea what was coming?"],
+    ["b", "What was the best day of last summer?"],
+    ["k", "What is a promise you made as a kid that you have actually kept?"]
+  ]),
+  dream: deck("r2_", [
+    ["b", "Pick any city for a weekend for two. Where, and what is the first thing we do?"],
+    ["bf", "Plan a perfect day for the two of us, hour by hour.", "{p} changes exactly one thing."],
+    ["k", "What does your life look like at twenty-five on an ordinary Tuesday?"],
+    ["p", "We get a camper van for the summer. Who drives, who navigates and where do we break down?"],
+    ["d", "What is a goal you have that scares you a little?"],
+    ["p", "If we opened a place together, a cafe, a shop, anything, what would it be called?"],
+    ["b", "What is a wild thing you want to do at least once, and would you take {p}?"],
+    ["k", "What would you build if you had the money and the team?"],
+    ["d", "What do you want to be known for?"],
+    ["bf", "Describe the flat we would share one day, in five details."],
+    ["p", "What pet do we get, what is its name, and who does it love more?"],
+    ["k", "What would you study if marks and jobs did not matter?"],
+    ["b", "You can teleport us somewhere for exactly one hour right now. Where?"],
+    ["d", "What do you hope people say about you when you are not in the room?"],
+    ["p", "Design a holiday that only the two of us celebrate. Date, food, rules."],
+    ["k", "What is on your list for next year that would make it a great one?"],
+    ["bf", "What is a tradition we should start tonight and still be doing in ten years?"],
+    ["p", "You win a ridiculous amount of money tomorrow. What are the first three things you do?"],
+    ["d", "Where do you want to be when you turn twenty, and who is there?"],
+    ["b", "Which concert, match or event would you take {p} to if tickets were free?"],
+    ["k", "What does a great summer for the two of us look like?"],
+    ["p", "We have to enter a competition as a team next month. Which one do we actually win?"],
+    ["d", "What kind of couple do you want us to be when things get hard?"],
+    ["b", "What is the first trip we should take, and what goes wrong on it?"],
+    ["k", "What do you want to learn from {p}?"],
+    ["bf", "Describe our hundredth date."],
+    ["p", "We get one superpower to share. Which, and who uses it more irresponsibly?"],
+    ["d", "What would you regret not having tried by the time you are thirty?"]
+  ]),
+  flirt: deck("f2_", [
+    ["f", "What is one thing about {p} you find a little too attractive?"],
+    ["f", "Give {p} one compliment you have been saving."],
+    ["fp", "What was the last thing {p} did that made you blush?"],
+    ["f", "When does {p} look their best without even trying?"],
+    ["f", "What do you love about {p}'s voice?"],
+    ["f", "What would you like {p} to do more often?", "{p} does a small version of it right now."],
+    ["f", "What is the first thing you look for when you see {p} across a room?"],
+    ["f", "Describe a perfect hug from {p}. Then check if the real one matches."],
+    ["fp", "If you had to save {p} in your phone under a new name, what would it be?"],
+    ["f", "What little thing does {p} do that gets you every time?"],
+    ["f", "What do you think about right after you say goodnight to {p}?"],
+    ["f", "When did {p} look so good you forgot what you were saying?"],
+    ["fp", "What is {p}'s most dangerous smile, and when does it come out?"],
+    ["f", "What would you write on a note and hide in {p}'s pocket?"],
+    ["f", "What is your favorite way that {p} touches you: hand, hair, shoulder, hug?"],
+    ["f", "Where is your favorite place to be kissed: cheek, forehead, hand or lips?"],
+    ["fp", "Rate our first kiss from 1 to 10, then say what a 10 would need."],
+    ["f", "What is something {p} wears that you wish they wore more?"],
+    ["f", "What is the most attractive thing {p} does without knowing it?"],
+    ["fp", "What is the cheesiest line that would actually work on you? {p} tries it."],
+    ["f", "Describe the moment you most wanted to hold {p}'s hand and it was not possible."],
+    ["f", "What part of your day is better because {p} exists?"],
+    ["fp", "What song would you dedicate to {p}, and which line is the reason?"],
+    ["f", "What would a perfect slow evening with {p} look like, start to finish?"],
+    ["f", "What do you notice about {p} that you think nobody else does?"],
+    ["fp", "What is the most romantic thing you would do if you were not afraid of looking silly?"],
+    ["f", "What did {p} do this week that made you like them more?"],
+    ["f", "What do you want to whisper to {p} right now? Whisper it."],
+    ["fp", "Which three words would you use to describe kissing {p}?"],
+    ["f", "What is one thing about {p} you hope never changes?"]
+  ]),
+  dare: deck("g2_", [
+    ["f", "Seven seconds. A hug or a kiss, {p} chooses which.", 1],
+    ["f", "Slow dance with {p} for thirty seconds. No music, you hum.", 2],
+    ["c", "Hold {p}'s face and give them your most sincere compliment without laughing.", 1],
+    ["p", "Hold eye contact with {p} for thirty seconds. Whoever laughs first owes a forehead kiss.", 1],
+    ["p", "Re-enact the moment you two first spoke at the hackathon. Full drama, {p} plays themself.", 2],
+    ["p", "Re-enact the hmm, I don't know from the rainy night, then what came after.", 2],
+    ["c", "Send {p} the sweetest message you can write in twenty seconds. They read it out loud.", 1],
+    ["p", "Show {p} the most embarrassing photo of yourself on your phone.", 1],
+    ["p", "Teach {p} something in sixty seconds. They have to show they learned it.", 2],
+    ["p", "{p} gets one question, anything they want. You have to answer honestly.", 1],
+    ["c", "Kiss {p}'s hand like it is 1820 and say something poetic.", 1],
+    ["p", "Stand up. {p} mirrors every move you make for twenty seconds.", 2],
+    ["c", "Draw a heart on {p}'s palm with your finger and tell them a secret.", 1],
+    ["p", "Do your best impression of {p} flirting. They rate it.", 2],
+    ["p", "Pitch yourself as {p}'s partner like a hackathon demo: sixty seconds, a problem, a solution and a slogan.", 2],
+    ["p", "Thumb war, best of three. Loser gives a forehead kiss.", 2],
+    ["p", "Narrate our first kiss like a sports commentator.", 2],
+    ["p", "Call {p} by a brand new pet name until your next turn. They get one veto.", 1],
+    ["p", "Without speaking, act out a memory of you two until {p} guesses it.", 2],
+    ["c", "Show {p} three photos from your camera roll they have never seen, and tell the story of one.", 1],
+    ["p", "Balance on one leg while naming five things you love about {p}.", 3],
+    ["c", "Ask {p} the question you have been holding back.", 1],
+    ["p", "Describe {p} using only film titles. They guess what you mean.", 1],
+    ["p", "Let {p} choose your lock screen for the next three days.", 1],
+    ["p", "Speak only in rhyme until your next turn.", 2],
+    ["c", "Give {p} a thirty-second shoulder massage. They rate it out of ten.", 1],
+    ["p", "Serenade {p} with one line of a love song, on one knee.", 3],
+    ["p", "Trade one item with {p}, a ring, a hoodie, a hair tie, until the game ends.", 1],
+    ["p", "Draw {p} in thirty seconds on anything you can find. They keep it.", 2],
+    ["c", "Read {p} the last note you wrote in your phone.", 1],
+    ["p", "Try to make {p} laugh in fifteen seconds without touching them.", 2],
+    ["p", "Invent a secret handshake with {p} in under a minute. Use it at the end of the game.", 2]
+  ]),
+  guess: deck("q2_", [
+    ["k", "What I do first if we have a fight", ["Text you", "Wait for you to text", "Pretend it is fine", "Show up in person"]],
+    ["p", "My biggest ick", ["Being rude to waiters", "Bragging", "Never asking questions", "Chewing loudly"]],
+    ["f", "The compliment I secretly want most", ["You are funny", "You are smart", "You look amazing", "I feel safe with you"]],
+    ["k", "When I miss you most", ["First thing in the morning", "Late at night", "When something funny happens", "On a bad day"]],
+    ["k", "What I overthink most", ["Messages I sent", "How I look", "What people think of me", "The future"]],
+    ["f", "What I was thinking during our first kiss", ["Finally", "Do not mess this up", "Nothing at all", "Is this really happening"]],
+    ["k", "How I act when I am jealous", ["Go quiet", "Jokes with an edge", "Say it straight", "Get extra clingy"]],
+    ["p", "The thing I will not share, not even with you", ["My fries", "My hoodie", "My playlist", "My blanket"]],
+    ["k", "How I want to be comforted", ["A long hug", "Make me laugh", "Just listen", "Fix the problem"]],
+    ["f", "What I liked first about you", ["Your smile", "How you talk", "Your confidence", "Your eyes"]],
+    ["k", "My idea of our best next date", ["Somewhere new in the city", "Cook something together", "Film and blankets", "A long walk with no plan"]],
+    ["p", "What I would do if you fell asleep on a call", ["Stay and listen", "Hang up right away", "Screenshot it", "Fall asleep too"]],
+    ["k", "What I am worst at admitting", ["I was wrong", "I am hurt", "I need help", "I am jealous"]],
+    ["f", "How I show I like someone", ["Teasing", "Little gifts", "All my time", "Saying it"]],
+    ["k", "What stresses me most", ["Being late", "Unanswered messages", "Exams", "People being upset with me"]],
+    ["p", "If I see a spider near you", ["Rescue you", "Rescue the spider", "Run", "Pretend I saw nothing"]],
+    ["k", "What I want you to do when I am quiet", ["Ask once, then wait", "Keep asking", "Distract me", "Sit with me"]],
+    ["f", "My favorite kind of kiss", ["Forehead", "Cheek", "Quick and stolen", "Slow"]],
+    ["k", "What I would save of ours first", ["Our chat", "Our photos", "Something you gave me", "The memory is enough"]],
+    ["p", "In a horror film I am", ["First one gone", "The one with the plan", "The one who runs", "Secretly the villain"]],
+    ["k", "What makes me feel most loved", ["Kind words", "Time together", "A thoughtful gift", "Being held"]],
+    ["p", "My texting style with you", ["Instant replies", "Hours, then ten at once", "Voice messages", "Memes first"]],
+    ["k", "What I noticed about your family first", ["How loud or quiet it is", "How you talk to each other", "The food", "How they looked at me"]],
+    ["f", "When I think you look best", ["Dressed up", "Just woken up", "Laughing", "Concentrating"]],
+    ["k", "My reaction to a surprise party", ["Love it", "Smile and suffer", "Cry", "Already guessed it"]],
+    ["p", "What I would get us matching", ["Hoodies", "Bracelets", "Phone wallpapers", "Nothing, ever"]],
+    ["k", "What I do the night before something big", ["Plan everything", "Cannot sleep", "Pretend it is not happening", "Sleep like a baby"]],
+    ["f", "What I wanted to do the first time we were alone", ["Talk for hours", "Hold your hand", "Kiss you", "Run away"]],
+    ["k", "My honest answer to: are you okay?", ["Yes, and I mean it", "Yes, but no", "Ask me again later", "I will tell you everything"]],
+    ["p", "On a long drive I am", ["The DJ", "Asleep", "The navigator", "The talker"]],
+    ["k", "What I would change about how we met", ["Nothing", "Fewer people watching", "Talk to you sooner", "Better outfit"]],
+    ["f", "What gets me fastest", ["A look", "A message out of nowhere", "A hug from behind", "My name, said softly"]],
+    ["k", "What I am most likely to be late because of", ["Choosing what to wear", "Lost track of time", "Could not find something", "I am never late"]],
+    ["p", "What I think you dream about", ["Me, obviously", "Food", "Being chased", "Winning something"]],
+    ["k", "What I want more of from us", ["Adventures", "Quiet evenings", "Deep talks", "Silly moments"]],
+    ["f", "How long I wanted to kiss you before it happened", ["Since day one", "A week or two", "It hit me that night", "I am not telling"]]
+  ]),
+  who: deck("w2_", [
+    ["f", "Which of us made the first move, really?"],
+    ["f", "Which of us wanted the first kiss more that night?"],
+    ["k", "Which of us fell first?"],
+    ["p", "Which of us is more gone for the other?"],
+    ["p", "Which of us would crack first in a silent treatment?"],
+    ["k", "Which of us apologises better?"],
+    ["k", "Which of us is harder to read?"],
+    ["p", "Which of us gets jealous faster?"],
+    ["f", "Which of us is the better kisser?"],
+    ["p", "Which of us would win an argument at two in the morning?"],
+    ["k", "Which of us talks about the other more to friends?"],
+    ["k", "Which of us has changed more since we met?"],
+    ["p", "Which of us did the other's parents like more?"],
+    ["p", "Which of us says goodnight and then stays up?"],
+    ["k", "Which of us was more nervous on the first date?"],
+    ["p", "Which of us is more stubborn?"],
+    ["f", "Which of us stares more when the other is not looking?"],
+    ["p", "Which of us is more dramatic when sick?"],
+    ["k", "Which of us says sorry first?"],
+    ["f", "Which of us is more romantic?"],
+    ["p", "Which of us is the worse loser, including right now?"],
+    ["k", "Which of us is more likely to plan a surprise?"],
+    ["p", "Which of us would get us lost and refuse to admit it?"],
+    ["f", "Which of us was more obvious about liking the other?"],
+    ["k", "Which of us remembers small details better?"],
+    ["c", "Which of us is the bigger overthinker?"],
+    ["p", "Which of us is more likely to say the wrong thing in front of parents?"],
+    ["f", "Which of us gives better hugs?"],
+    ["p", "Which of us would survive longer without the other's messages?"],
+    ["k", "Which of us is braver?"],
+    ["p", "Which of us is more likely to cry at a film and deny it?"],
+    ["f", "Which of us thinks about the other more during the day?"],
+    ["p", "Which of us takes longer to get ready?"],
+    ["k", "Which of us is better at knowing what the other is feeling?"],
+    ["p", "Which of us would win at a staring contest?"],
+    ["f", "Which of us is more likely to steal a kiss in public?"],
+    ["k", "Which of us keeps more things to themself?"],
+    ["p", "Which of us is the bigger flirt?"],
+    ["c", "Which of us needs more reassurance?"],
+    ["f", "Which of us is going to win tonight?"]
+  ]),
+  take: deck("t2_", [
+    ["p", "Jealousy is a little bit cute."],
+    ["d", "You should say I love you only when you are completely sure."],
+    ["k", "Couples should know each other's phone passwords."],
+    ["p", "A boy and a girl can be best friends with zero feelings."],
+    ["d", "Whoever likes the other more has less power."],
+    ["k", "Going to sleep angry is sometimes the right call."],
+    ["f", "Love at first sight is real."],
+    ["p", "Texting good morning every single day gets boring."],
+    ["k", "It is fine to stay friends with an ex."],
+    ["d", "You can tell within the first month whether it will last."],
+    ["k", "Opposites attract, but similar people stay together."],
+    ["p", "Surprises are overrated. Asking what someone wants is better."],
+    ["k", "Looks matter more than people admit."],
+    ["d", "Whoever started it should apologise first, even if both were rude."],
+    ["k", "Long distance only works if there is an end date."],
+    ["p", "Posting your partner online means more than people say it does."],
+    ["f", "Teasing is a love language."],
+    ["f", "The first kiss matters more than the hundredth."],
+    ["d", "You should tell your partner everything."],
+    ["k", "Your parents liking your partner is non-negotiable."],
+    ["p", "Big romantic gestures in public are embarrassing."],
+    ["c", "Being comfortable in silence is the real test of a couple."],
+    ["d", "There is one right person for everyone."],
+    ["p", "It is okay to check who liked your partner's photo."],
+    ["d", "Arguments make couples stronger."],
+    ["k", "Planning a date is more attractive than paying for it."],
+    ["f", "A handwritten letter beats any gift."],
+    ["d", "Crying in front of your partner should feel normal."],
+    ["f", "You fall for a voice before a face."],
+    ["k", "Your friends' opinion of your relationship should count."],
+    ["f", "It is better to be the one who says it first."],
+    ["p", "The best first kisses are the ones nobody planned."],
+    ["d", "You can love someone and still need time away from them."],
+    ["p", "Whoever cooks should never have to clean."]
+  ]),
+  never: deck("n2_", [
+    ["p", "...practised a conversation with {p} in my head before having it."],
+    ["p", "...screenshotted our chat to show a friend."],
+    ["c", "...re-read our old messages just to smile."],
+    ["p", "...pretended to be busy so I would not reply too fast."],
+    ["d", "...been jealous of someone {p} was only being nice to."],
+    ["p", "...looked at {p}'s old photos further back than I would admit."],
+    ["d", "...written something for {p} and never sent it."],
+    ["p", "...cried at a film and hidden it."],
+    ["p", "...googled how to be a good boyfriend or girlfriend."],
+    ["f", "...dreamed about {p}."],
+    ["f", "...changed my outfit because I knew I would see {p}."],
+    ["d", "...told {p} I was fine when I was not."],
+    ["k", "...talked about {p} to my parents without being asked."],
+    ["f", "...imagined our first kiss before it happened."],
+    ["p", "...laughed at one of {p}'s jokes that was not funny."],
+    ["p", "...looked {p} up online before we had really talked."],
+    ["p", "...stayed up far too late talking to {p} and suffered at school."],
+    ["p", "...practised kissing on my own hand."],
+    ["p", "...pretended to know a song or a film to seem cool."],
+    ["c", "...kept something {p} gave me somewhere special."],
+    ["f", "...told a friend I liked {p} before {p} knew."],
+    ["c", "...got nervous before seeing {p}, even recently."],
+    ["f", "...wanted to hold {p}'s hand and chickened out."],
+    ["d", "...imagined our future further ahead than I would admit."],
+    ["p", "...smiled at my phone in public because of {p} and got caught."],
+    ["d", "...been scared this was too good to last."],
+    ["p", "...typed a long message to {p}, deleted it and sent ok."],
+    ["f", "...replayed our first kiss in my head during class."],
+    ["p", "...asked a friend what {p}'s message really meant."],
+    ["f", "...wanted to kiss {p} in the middle of a sentence."]
+  ]),
+  tt: deck("x2_", [
+    ["f", "Be chased", "Do the chasing"], ["f", "Kiss in the rain", "Kiss at sunset"], ["k", "Say it", "Show it"], ["d", "Truth that stings", "Kind lie"],
+    ["f", "Long hug", "Quick stolen kiss"], ["k", "Fight it out now", "Cool off first"], ["f", "One big gesture", "Small things daily"], ["k", "Know everything", "Keep some mystery"],
+    ["c", "Our song", "Our place"], ["f", "Good morning text", "Late-night call"], ["p", "Matching hoodies", "Stealing your hoodie"], ["k", "Plan the date", "Be surprised"],
+    ["f", "Holding hands in public", "Only when alone"], ["f", "Forehead kiss", "Cheek kiss"], ["p", "Tease", "Compliment"], ["k", "Talk it out", "Write it down"],
+    ["c", "Stay in", "Go out"], ["k", "A photo of it", "Just the memory"], ["p", "Head", "Heart"], ["p", "Win together", "Beat each other"],
+    ["b", "Sunrise date", "Midnight date"], ["p", "Dance badly together", "Watch others dance"], ["f", "Pet name", "Real name"], ["c", "Call when sad", "Text when sad"],
+    ["k", "Meet the friends first", "Meet the family first"], ["d", "Loud love", "Quiet love"], ["b", "Adventure", "Comfort"], ["p", "Share one dessert", "Get your own"],
+    ["k", "Voice note", "Long paragraph"], ["c", "Sit across", "Sit beside"], ["f", "Slow song", "Fast song"], ["p", "First to say sorry", "Last to say sorry"],
+    ["k", "Hear it straight", "Hear it gently"], ["b", "Road trip", "Night train"], ["f", "Eye contact", "Hand on your back"], ["p", "Be early together", "Be late together"],
+    ["d", "Be needed", "Be wanted"], ["c", "Rain on the window", "Snow outside"], ["k", "One hour every day", "One whole day a week"], ["f", "I missed you", "I am proud of you"]
+  ]),
+  wyr: deck("y2_", [
+    ["d", "Read your partner's mind for a day", "Have them read yours for a day"],
+    ["d", "A partner who tells you the truth even when it stings", "A partner who always makes you feel good"],
+    ["d", "Love a little more than you are loved", "Be loved a little more than you love"],
+    ["d", "One perfect year together, then never again", "A lifetime of pretty good"],
+    ["f", "Relive our first kiss once", "See ten seconds of us five years from now"],
+    ["k", "Never feel jealous again", "Never make anyone jealous again"],
+    ["p", "Your partner forgets your birthday", "Your partner forgets the date of your first kiss"],
+    ["k", "Fight and fix it the same night", "Sleep on it and talk calmly tomorrow"],
+    ["p", "Give up your phone for a month", "Give up kissing for a month"],
+    ["b", "A surprise trip tomorrow with no say in where", "A trip in six months planned exactly your way"],
+    ["p", "Your partner picks your outfits for a month", "You pick theirs for a month"],
+    ["k", "Lose all your photos together", "Lose all your chats"],
+    ["d", "Hear what your partner's friends really think of you", "Never find out"],
+    ["k", "Know that how you met was pure luck", "Know it was always going to happen"],
+    ["p", "Win every argument", "Never have one"],
+    ["k", "Text all day", "One long call at night"],
+    ["d", "Know your partner's biggest fear", "Know their biggest dream"],
+    ["p", "Always know when someone is lying to you", "Always get away with lying"],
+    ["f", "Get caught in the rain together with no umbrella", "Watch the storm from inside with hot chocolate"],
+    ["d", "Plenty of money and a job you hate", "Just enough and work you love"],
+    ["k", "Have met five years earlier", "Meet exactly when you did"],
+    ["f", "Have a love song written about you", "Write one that becomes a hit"],
+    ["d", "Tell your partner one secret tonight", "Hear one of theirs"],
+    ["p", "Be the couple everyone finds too cute", "Be the couple nobody knows about"],
+    ["k", "Know the exact day something big will change for you", "Be surprised"],
+    ["d", "Be understood without explaining", "Be asked until you explain"],
+    ["p", "Say everything you think for a week", "Say nothing you think for a week"],
+    ["f", "A kiss you saw coming", "A kiss that surprised you"],
+    ["d", "Forgive quickly and forget slowly", "Forgive slowly and forget completely"],
+    ["b", "Be famous together", "Be completely free together"]
+  ]),
+  story: deck("l2_", [
+    ["p", "Tell three things you thought about {p} before you two had talked. One is invented."],
+    ["p", "Tell three things you did the day of the hackathon. One did not happen."],
+    ["p", "Tell three things that went through your head on the rainy night. One is made up."],
+    ["p", "Tell three things you have done to impress someone. One is a lie."],
+    ["p", "Tell three things you are scared of. One is invented."],
+    ["p", "Tell three things you have broken, lost or ruined. One never happened."],
+    ["p", "Tell three school stories. One is a lie."],
+    ["p", "Tell three things you believed as a kid. One is made up."],
+    ["p", "Tell three things your friends said about {p}. One nobody said."],
+    ["p", "Tell three talents you have. One you cannot actually do."],
+    ["p", "Tell three dreams you remember having. One you never had."],
+    ["p", "Tell three things you did this week. One did not happen."],
+    ["p", "Tell three things on your phone right now. One is not there."],
+    ["p", "Tell three crushes you had before {p}. One is invented."],
+    ["p", "Tell three things you would secretly love as a gift. One you would hate."],
+    ["p", "Tell three times you got caught. One never happened."],
+    ["p", "Tell three foods you refuse to eat. One you actually like."],
+    ["p", "Tell three things you did during the week you two were in different countries. One is a lie."],
+    ["p", "Tell three things you have never told your parents. One they actually know."],
+    ["p", "Tell three records you hold among your friends. One is made up."]
+  ]),
+  bench: deck("b2_", [
+    ["c", "Take a slow breath together. Then each of you says how your energy is, from 1 to 10."],
+    ["c", "Each of you names one good thing from today, however small."],
+    ["c", "Sit close and say nothing for twenty seconds. Then each say the first thing that came to mind."],
+    ["c", "Each of you says one thing that was heavy this week. No fixing, only listening."],
+    ["c", "Look at each other for ten seconds. Then each say one word for how you feel."],
+    ["c", "Each of you says one thing the other did recently that you never thanked them for."],
+    ["c", "Each of you picks the next snack or drink for the other."],
+    ["c", "Each of you says the best moment between you two since the last time you played."],
+    ["c", "Each of you says one thing you are quietly worried about and one thing you are quietly excited about."],
+    ["c", "Hold hands. Each of you says one thing you like about this exact moment."],
+    ["c", "Each of you says what you would like more of next week, and what less."],
+    ["c", "Lean on each other for thirty seconds. Phones face down."],
+    ["c", "Each of you says where your head has been today, apart from here."],
+    ["c", "Each of you names a sound, a taste and a place that calm you down."],
+    ["c", "Each of you says one thing you want the other to know before tonight ends."],
+    ["c", "Each of you says what your body is asking for: water, food, rest or warmth. Then sort it out."]
+  ]),
+  gift: deck("i2_", [
+    ["b", "Tell {p} one thing you noticed about them this week that you liked."],
+    ["c", "Tell {p} one way they have made your life easier."],
+    ["b", "Give {p} a compliment that has nothing to do with looks."],
+    ["c", "Thank {p} for something specific. Name the day and the place."],
+    ["f", "Tell {p} what you would miss first if you did not see them for a month."],
+    ["b", "Tell {p} what they are better at than they think."],
+    ["c", "Tell {p} one thing you admire about how they treat other people."],
+    ["f", "Tell {p} the moment this week when you were happiest to see them."],
+    ["c", "Tell {p} something they taught you without meaning to."],
+    ["b", "Tell {p} what your friends or family like about them."],
+    ["c", "Tell {p} one way they have made you braver or calmer."],
+    ["b", "Tell {p} the quality of theirs you would steal if you could."],
+    ["f", "Tell {p} what you thought when you saw them today."],
+    ["c", "Promise {p} one small thing for this week. They hold you to it."],
+    ["b", "Tell {p} what makes them different from everyone else you know."],
+    ["c", "Tell {p} about a moment when you were proud of them."],
+    ["f", "Tell {p} your favorite thing about the rainy night that was not the kiss."],
+    ["b", "Tell {p} the best decision they have made since you met."],
+    ["f", "Tell {p} what you like most about who you are when you are with them."],
+    ["c", "Tell {p} one thing you are sorry for, however small."]
+  ]),
+  happen: deck("h2_", [
+    ["b", "Two-minute teacher", "Each of you teaches the other one thing in sixty seconds: a word, a move, a trick. Then perform both."],
+    ["p", "Photo booth", "Take a real photo together right now. One serious, one ridiculous."],
+    ["k", "Date draft", "Plan your next date in ninety seconds. Each of you gets exactly one veto."],
+    ["p", "Blind portrait", "Draw each other at the same time without looking at the paper. Swap and sign."],
+    ["b", "Song swap", "Each of you picks one song the other has to hear tonight. Play thirty seconds of both."],
+    ["k", "Time capsule", "Each of you records a ten-second voice note for the two of you to open in one year."],
+    ["p", "New language", "Together, learn how to say you are cute in a language neither of you speaks. Use it tonight."],
+    ["c", "Wishing well", "Each of you makes a wish for the other, out loud."],
+    ["k", "Fortune teller", "Each of you predicts one thing that will happen to the other this month. Check next time you play."],
+    ["p", "Staring contest", "First to blink or laugh loses and gives the winner a compliment."],
+    ["b", "Bucket list", "Agree on three things to do together before summer. Write them down somewhere real."],
+    ["p", "Swap seats, swap roles", "For one minute, {a} talks like {p} and {p} talks like {a}."],
+    ["c", "Rain check", "Each of you says one thing you would like to redo from the past week, and how."],
+    ["k", "Two questions", "Each of you asks the other one question you have never asked before."],
+    ["p", "Rock, paper, scissors", "Best of five. The winner chooses a small reward to collect before the night ends."],
+    ["b", "Soundtrack", "Agree on the song for this exact moment and play it for the next three turns."],
+    ["k", "Trailer", "Together, tell the trailer for the film about you two, one sentence each, back and forth."],
+    ["p", "Compliment duel", "Take turns giving compliments. First one to repeat or hesitate loses."],
+    ["c", "Lantern release", "Each of you says one thing you want to let go of this year."],
+    ["b", "Map pin", "Each of you names one place within an hour of here you have never been. Pick one to visit together."],
+    ["k", "Thirty seconds of thanks", "Each of you gets thirty seconds to thank the other for as many things as possible. Count them."],
+    ["p", "Human statue", "One of you poses the other like a statue. Photo required."]
+  ]),
+  rain: deck("a2_", [
+    ["f", "What is the first thing you remember when you hear rain now?"],
+    ["c", "What did the rain sound like that night? What else do you remember hearing?"],
+    ["f", "We were holding each other before anything happened. What were you hoping would come next?"],
+    ["dc", "What would you say to the two people standing in the rain that night, one minute before?"],
+    ["c", "Which place feels safest to you in the whole world, and is {p} in it?"],
+    ["f", "What do you want our next rainy evening to look like?"],
+    ["dc", "What do you think about when you cannot sleep?"],
+    ["c", "What is something soft about you that people do not see at first?"],
+    ["f", "What is your favorite thing about being held by {p}?"],
+    ["dc", "What calms you down faster than anything else?"],
+    ["c", "Which film would you put on under a blanket with {p} tonight, and who falls asleep first?"],
+    ["f", "If you could send one message back to yourself on the afternoon of the rainy night, what would it say?"]
+  ]),
+  sun: deck("o2_", [
+    ["b", "What made you unreasonably happy recently?"],
+    ["bp", "What is your victory dance? Demonstrate it."],
+    ["b", "What is the best news you got this year?"],
+    ["bp", "What always makes you laugh, no matter how many times you see it? Show {p}."],
+    ["b", "What are you proud of {p} for lately?"],
+    ["bp", "What would you do with endless energy for one afternoon?"],
+    ["b", "What is the most fun we have had so far, and how do we beat it?"],
+    ["bp", "What is the funniest thing {p} has ever said? Do the voice."],
+    ["b", "What small thing are you celebrating this week?"],
+    ["bp", "What song should be playing right now? Put it on."]
+  ]),
+  parade: deck("p2_", [
+    ["f", "What is the most romantic thing anyone could do for you?"],
+    ["f", "What makes you feel chosen?"],
+    ["fp", "What is the cheesiest thing you would secretly love {p} to do for you?"],
+    ["f", "Where would you take {p} if you had one evening to impress them all over again?"],
+    ["f", "What did you imagine a relationship would feel like, and what is it actually like?"],
+    ["fb", "Build a three-song playlist for a date with {p}. Explain each song."],
+    ["f", "What is one thing about how {p} treats you that you want to keep forever?"],
+    ["fp", "Give {p} a title worthy of a parade banner."],
+    ["f", "What is a small romantic gesture that works on you every time?"],
+    ["f", "Describe our next kiss, where and when."]
+  ]),
+  picnic: deck("c2_", [
+    ["k", "Which dish from your family should {p} be made to try, and who would be nervous about it?"],
+    ["kp", "If {p} were a dessert, which one, and why?"],
+    ["k", "What should we cook together first, and who is in charge?"],
+    ["kp", "Which food combination do you love that worries other people?"],
+    ["k", "What is your order at your favorite place, word for word?", "{p} tries to repeat it."],
+    ["kb", "What is the best meal you have ever had, and who were you with?"],
+    ["k", "What taste reminds you of someone you love?"],
+    ["kp", "What is the worst thing you have ever cooked, and who had to eat it?"],
+    ["k", "What would you put in a picnic basket to win {p} over in one bite?"],
+    ["kb", "What would your last-day-on-earth menu be?"]
+  ]),
+  boat: deck("e2_", [
+    ["bd", "What would you do if you were not afraid of looking silly?"],
+    ["b", "Where would the two of us get happily lost?"],
+    ["bd", "What is something new you want us to try this month?", "Agree on a day before you tap Done."],
+    ["b", "What is the bravest thing you have done on purpose?"],
+    ["bd", "What risk are you glad you took?"],
+    ["bp", "We have to leave in one hour for a week away. What three things do you pack first?"],
+    ["bd", "What comes next for you that you are excited and a little scared about?"],
+    ["b", "Which adventure do you want to have before you finish school?"],
+    ["bp", "What is the worst thing that went wrong on a trip that is funny now?"],
+    ["bd", "What is one thing you would do tomorrow if {p} dared you to?"]
+  ]),
+  fire: deck("k2_", [
+    ["bf", "What about us deserves fireworks?"],
+    ["b", "What is the best moment of your year so far? You may say the obvious one."],
+    ["b", "What win, big or small, did you never properly celebrate?"],
+    ["bd", "Who are you most grateful for right now, and have you told them?"],
+    ["bf", "What do you want to celebrate with {p} one year from now?"],
+    ["b", "What made you feel on top of the world recently?"],
+    ["bp", "How do you celebrate when nobody is watching?"],
+    ["bf", "Make a toast to {p} with whatever you are drinking."],
+    ["b", "What are you proudest of from the last twelve months?"],
+    ["bf", "What is the best night we have had so far?"]
+  ])
+};
+
+/* Which flow a tile type uses. */
+var KIND = { us: "talk", spark: "talk", deep: "talk", memory: "talk", dream: "talk", flirt: "talk", gift: "collect", dare: "dare", story: "story", bench: "bench", guess: "guess", tt: "tt", wyr: "tt", who: "tt", take: "tt", never: "tt", event: "happen" };
+var TALK_OVERRIDE = ["spark", "deep", "memory", "dream", "flirt"];
+var FIXED_OPTS = { take: ["Agree", "Disagree"], never: ["I have", "Never"] };
+
+/* ================= Helpers ================= */
+
+function $(id) { return document.getElementById(id); }
+function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+function clone(o) { return JSON.parse(JSON.stringify(o)); }
+function isObj(x) { return x !== null && typeof x === "object" && !Array.isArray(x); }
+function merge(target, patch) {
+  Object.keys(patch).forEach(function (k) {
+    var v = patch[k];
+    if (isObj(v)) {
+      if (!isObj(target[k])) target[k] = {};
+      merge(target[k], v);
+    } else {
+      target[k] = Array.isArray(v) ? v.slice() : v;
+    }
+  });
+  return target;
+}
+function ini(name) { return String(name || "?").trim().charAt(0).toUpperCase() || "?"; }
+function rnd(n) { return Math.floor(Math.random() * n); }
+function lsGet(k) { try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+function lsSet(k, v) { try { window.localStorage.setItem(k, v); } catch (e) { /* storage can be blocked */ } }
+function heart() {
+  return '<svg class="hrt" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="' + HEART_PATH + '"/></svg>';
+}
+function iconSVG(type, cls) {
+  return '<svg class="' + (cls || "ico") + '" viewBox="0 0 24 24" aria-hidden="true">' + (ICONS[type] || "") + "</svg>";
+}
+function reducedMotion() {
+  return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+}
+
+/* ================= Sound ================= */
+
+var audioCtx = null, soundOn = lsGet("weekone-sound") !== "off";
+function unlockAudio() {
+  try {
+    if (!audioCtx) { var AC = window.AudioContext || window.webkitAudioContext; if (AC) audioCtx = new AC(); }
+    if (audioCtx && audioCtx.state === "suspended") audioCtx.resume();
+  } catch (e) { /* sound is optional */ }
+}
+/* Two soft notes when hearts land. */
+function chime() {
+  if (!soundOn || !audioCtx) return;
+  try {
+    var t = audioCtx.currentTime;
+    [[784, 0], [1175, 0.09]].forEach(function (p) {
+      var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "sine"; o.frequency.value = p[0];
+      g.gain.setValueAtTime(0.0001, t + p[1]);
+      g.gain.exponentialRampToValueAtTime(0.16, t + p[1] + 0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + p[1] + 0.5);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t + p[1]); o.stop(t + p[1] + 0.6);
+    });
+  } catch (e) { /* sound is optional */ }
+}
+function bell(base, long) {
+  if (!soundOn || !audioCtx) return;
+  try {
+    var t = audioCtx.currentTime, len = long ? 2.4 : 1.0;
+    [[1, 0.5], [2.01, 0.25], [3.02, 0.12], [4.2, 0.06]].forEach(function (p) {
+      var o = audioCtx.createOscillator(), g = audioCtx.createGain();
+      o.type = "sine"; o.frequency.value = base * p[0];
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(p[1] * 0.4, t + 0.01);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.connect(g); g.connect(audioCtx.destination);
+      o.start(t); o.stop(t + len + 0.1);
+    });
+  } catch (e) { /* sound is optional */ }
+}
+
+
+/* ================= State ================= */
+
+function freshState() {
+  return {
+    v: 3, prize: "", phase: "lobby", order: [], players: {}, turn: 0, step: "", card: "", roll: 0, dice: [0, 0],
+    pick0: "", pick1: "", used: [], note: "", dur: 30, energy: "cozy", endsAt: 0, paused: false, remain: 0,
+    turns: 0, ev: "", evLeft: 0, sinceEv: 0, lastEv: "", evShow: "", custom: {}
+  };
+}
+
+var S = null;
+var mode = "pending";      // pending | sync | local
+var uid = null;            // my id in sync mode
+var viewer = "L0";         // who holds the phone in local mode
+var ref = null, unsub = null, docExists = false;
+var readOnly = false, syncError = false, showEscape = false;
+var queue = Promise.resolve();
+var draft = {};
+var rolling = false, resolvedKey = null, lastSig = null, lastPanel = "", confirming = false, confirmTimer = null;
+var lastEvShow = "", endHandled = false, endRung = false;
+
+function me() { return mode === "local" ? viewer : uid; }
+function nm(u) { return S && S.players[u] ? S.players[u].name : "Player"; }
+function nmIn(s, u) { return s && s.players[u] ? s.players[u].name : "Player"; }
+/* {p} is the other player, {a} is the walker. */
+function fill(text, an, pn) { return String(text || "").replace(/\{p\}/g, pn).replace(/\{a\}/g, an); }
+function parseCard(str) { try { return str ? JSON.parse(str) : null; } catch (e) { return null; } }
+function getCard() { return S ? parseCard(S.card) : null; }
+function isPrivate(step) { return step === "pickG" || step === "pickS" || step === "tt"; }
+function figOf(u, k) {
+  var p = S && S.players[u];
+  return (p && p.fig) || (k === 0 ? "king" : "queen");
+}
+function lapOf(p) { return Math.floor(((p && p.steps) || 0) / N); }
+function tileOf(p) { return ((p && p.steps) || 0) % N; }
+
+function remainingMs(s) {
+  if (s.paused) return s.remain || 0;
+  return Math.max(0, (s.endsAt || 0) - Date.now());
+}
+function timeIsUp(s) { return s && s.phase === "play" && !s.paused && s.endsAt > 0 && Date.now() >= s.endsAt; }
+function fmtClock(ms) {
+  var t = Math.ceil(ms / 1000), m = Math.floor(t / 60), sec = t % 60;
+  return m + ":" + (sec < 10 ? "0" : "") + sec;
+}
+
+function needs(s) {
+  var a = s.order[s.turn], p = s.order[1 - s.turn], c, r = [];
+  switch (s.step) {
+    case "roll": return [a];
+    case "event": return [a, p];
+    case "card":
+      c = parseCard(s.card);
+      if (!c) return [p];
+      if (c.k === "collect") return [a];
+      if (c.k === "bench" || c.k === "happen" || c.k === "talk") return [a, p];
+      return [p];
+    case "pickG": return [a];
+    case "pickS": return [p];
+    case "tt":
+      if (!s.pick0) r.push(s.order[0]);
+      if (!s.pick1) r.push(s.order[1]);
+      return r;
+    case "reveal":
+    case "tt_reveal": return [a, p];
+  }
+  return [];
+}
+
+/* ================= Cards ================= */
+
+function moodMult(codes, ev, energy) {
+  var E = ev ? EVENTS[ev] : null, EN = ENERGY[energy] || ENERGY.balanced, best = 0;
+  for (var i = 0; i < codes.length; i++) {
+    var c = codes.charAt(i), w = ((E && E.mood[c]) || 1) * (EN.mood[c] || 1);
+    if (w > best) best = w;
+  }
+  return best || 1;
+}
+
+function pickWeighted(pool, wfn) {
+  var tot = 0, ws = pool.map(function (c) { var w = wfn(c); tot += w; return w; });
+  var r = Math.random() * tot;
+  for (var i = 0; i < pool.length; i++) { r -= ws[i]; if (r <= 0) return pool[i]; }
+  return pool[pool.length - 1];
+}
+
+function pickCard(s, type) {
+  var used = s.used || [], ev = s.ev || "", E = ev ? EVENTS[ev] : null, energy = s.energy || "cozy";
+  var deckKey = type === "event" ? "happen" : type, viaEvent = "";
+  if (type === "us") {
+    var walker = s.order[s.turn], cu = s.custom || {};
+    var mineIds = Object.keys(cu).filter(function (id) {
+      var x = cu[id];
+      return x && !x.off && x.q && x.by !== walker && used.indexOf("cu_" + id) < 0;
+    });
+    if (mineIds.length && Math.random() < 0.6) {
+      var cid = mineIds[rnd(mineIds.length)];
+      return { card: { id: "cu_" + cid, type: "us", k: "talk", m: "k", q: cu[cid].q, by: cu[cid].by }, used: used.concat(["cu_" + cid]) };
+    }
+  }
+  if (E && E.deck && TALK_OVERRIDE.indexOf(type) >= 0 && Math.random() < E.deckP) { deckKey = E.deck; viaEvent = ev; }
+  var list = DECKS[deckKey];
+  if (type === "dare") {
+    var cap = (ENERGY[energy] || ENERGY.balanced).maxDare;
+    var ok = list.filter(function (c) { return c.x <= cap; });
+    if (ok.length) list = ok;
+  }
+  var fresh = list.filter(function (c) { return used.indexOf(c.id) < 0; });
+  var nextUsed = used;
+  if (!fresh.length) {
+    var ids = list.map(function (c) { return c.id; });
+    nextUsed = used.filter(function (id) { return ids.indexOf(id) < 0; });
+    fresh = list;
+  }
+  var c = pickWeighted(fresh, function (cd) {
+    var w = moodMult(cd.m, ev, energy);
+    if (type === "dare" && energy === "cozy" && cd.x === 2) w *= 0.35;
+    return w;
+  });
+  var card = { id: c.id, type: type, k: KIND[type], m: c.m, q: c.q };
+  if (viaEvent) card.ev = viaEvent;
+  if (type === "guess") card.o = c.x;
+  else if (type === "tt" || type === "wyr") { card.o = [c.q, c.x]; card.q = ""; }
+  else if (type === "who") card.o = [nmIn(s, s.order[0]), nmIn(s, s.order[1])];
+  else if (FIXED_OPTS[type]) card.o = FIXED_OPTS[type];
+  else if (KIND[type] === "talk") {
+    if (c.x) card.f = c.x;
+    else if (Math.random() < 0.5) card.f = FOLLOW[rnd(FOLLOW.length)];
+  }
+  else if (type === "event") { card.t = c.q; card.q = c.x; }
+  return { card: card, used: nextUsed.concat([c.id]) };
+}
+
+/* ================= Turn flow ================= */
+
+function addHearts(s, patch, map) {
+  patch.players = patch.players || {};
+  Object.keys(map).forEach(function (u) {
+    var cur = patch.players[u] && patch.players[u].hearts != null ? patch.players[u].hearts : s.players[u].hearts;
+    patch.players[u] = patch.players[u] || {};
+    patch.players[u].hearts = cur + map[u];
+  });
+}
+
+function boosted(s, type, n) {
+  var E = s.ev ? EVENTS[s.ev] : null;
+  return (n > 0 && E && E.boost.indexOf(type) >= 0) ? n + 1 : n;
+}
+
+function advancePatch(s, forceEv) {
+  var p = { turn: 1 - s.turn, step: "roll", card: "", roll: 0, dice: [0, 0], pick0: "", pick1: "", evShow: "", turns: (s.turns || 0) + 1 };
+  var ev = s.ev || "", left = s.evLeft || 0, since = s.sinceEv || 0, started = "";
+  if (forceEv) {
+    started = forceEv;
+  } else if (ev) {
+    left--;
+    if (left <= 0) { p.ev = ""; p.evLeft = 0; p.sinceEv = 0; p.note = EVENTS[ev].end; }
+    else p.evLeft = left;
+  } else {
+    since++;
+    p.sinceEv = since;
+    if (p.turns >= 3 && since >= 3 && Math.random() < Math.min(0.75, 0.15 + 0.15 * (since - 3))) started = pickEvent(s.lastEv);
+  }
+  if (started) {
+    p.ev = started; p.evLeft = EVENTS[started].len; p.lastEv = started; p.sinceEv = 0;
+    p.step = "event"; p.evShow = started;
+  }
+  return p;
+}
+
+/* Merge the current action's patch with whatever the next turn needs. */
+function finishTurn(s, patch, forceEv) {
+  var next = merge(clone(s), clone(patch));
+  var adv = advancePatch(next, forceEv);
+  merge(patch, adv);
+  if (adv.evShow === "fire") {
+    var map = {};
+    next.order.forEach(function (u) { map[u] = 1; });
+    addHearts(next, patch, map);
+  }
+  return patch;
+}
+
+/* ================= Storage and sync ================= */
+
+function saveLocal() { lsSet("weekone-local-v3", JSON.stringify({ S: S, viewer: viewer })); }
+function loadLocal() {
+  try {
+    var raw = lsGet("weekone-local-v3");
+    if (!raw) return false;
+    var o = JSON.parse(raw);
+    if (!o || !o.S || o.S.v !== 3) return false;
+    S = o.S; viewer = o.viewer || "L0";
+    S.order = S.order || []; S.players = S.players || {}; S.used = S.used || []; S.custom = S.custom || {};
+    return true;
+  } catch (e) { return false; }
+}
+function deviceId() {
+  var d = lsGet("weekone-device");
+  if (!d) { d = "d_" + Math.random().toString(36).slice(2, 10); lsSet("weekone-device", d); }
+  return d;
+}
+
+var toastTimer = null;
+function toast(msg) {
+  var t = $("toast");
+  t.textContent = msg;
+  t.className = "toast show";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function () { t.className = "toast"; }, 2600);
+}
+
+function onWriteError(e) {
+  resolvedKey = null;
+  var code = e && e.code ? e.code : "";
+  if (code === "invalid_argument") readOnly = true;
+  toast(readOnly ? "This account cannot save moves." : "Could not save. Check your connection.");
+  render();
+}
+
+function commit(patch) {
+  if (mode === "local") {
+    merge(S, patch);
+    saveLocal();
+    afterChange();
+    return Promise.resolve();
+  }
+  queue = queue.then(function () {
+    return docExists ? ref.update(patch) : ref.set(merge(freshState(), clone(patch))).then(function () { docExists = true; });
+  }).catch(onWriteError);
+  return queue;
+}
+
+function afterChange() {
+  if (S.phase !== "end" && !timeIsUp(S)) { endHandled = false; endRung = false; }
+  if (S.phase === "play" && S.evShow && S.evShow !== lastEvShow) bell(660, false);
+  lastEvShow = S.evShow || "";
+  if ((S.phase === "end" || timeIsUp(S)) && !endRung) { endRung = true; bell(880, true); }
+  render();
+  maybeResolve();
+}
+
+function maybeResolve() {
+  var s = S;
+  if (!s || s.phase !== "play" || s.step !== "tt" || !s.pick0 || !s.pick1) return;
+  var key = (s.used || []).length + "|" + s.turn + "|" + (s.turns || 0);
+  if (key === resolvedKey) return;
+  resolvedKey = key;
+  var patch = { step: "tt_reveal" };
+  if (s.pick0 === s.pick1) {
+    var map = {};
+    s.order.forEach(function (u) { map[u] = 1; });
+    addHearts(s, patch, map);
+    patch.note = "In sync. +1 heart each.";
+  } else {
+    patch.note = "Different picks.";
+  }
+  commit(patch);
+}
+
+function onSnapshot(snap) {
+  syncError = false;
+  var data = snap.exists ? clone(snap.data()) : null;
+  if (data && data.v === 3) {
+    docExists = true;
+    S = data;
+    S.order = S.order || []; S.players = S.players || {}; S.used = S.used || []; S.custom = S.custom || {};
+  } else {
+    docExists = false;   // missing or an older version: the next write replaces it
+    S = freshState();
+  }
+  afterChange();
+}
+
+function startLocalMode() {
+  if (unsub) { try { unsub(); } catch (e) { /* already closed */ } unsub = null; }
+  mode = "local";
+  readOnly = false; syncError = false;
+  if (!loadLocal()) { S = freshState(); viewer = "L0"; }
+  afterChange();
+}
+
+/* ================= Actions ================= */
+
+function doJoin() {
+  var name = ($("nameIn") ? $("nameIn").value : "").trim();
+  if (!name) { toast("Type your name first."); return; }
+  lsSet("weekone-name", name);
+  var others = Object.keys(S.players);
+  var otherFig = others.length ? figOf(others[0], 0) : null;
+  var fig = draft.fig && draft.fig !== otherFig ? draft.fig : (otherFig === "king" ? "queen" : "king");
+  var pl = {}; pl[uid] = { name: name, fig: fig, steps: 0, hearts: 0, joined: Date.now() };
+  commit({ players: pl });
+}
+
+function startPatch(s, order) {
+  var p = {
+    phase: "play", order: order, turn: 0, step: "roll", card: "", roll: 0, dice: [0, 0], pick0: "", pick1: "",
+    note: "Game on. Roll to start your walk.", endsAt: Date.now() + (s.dur || 30) * 60000, paused: false, remain: 0,
+    turns: 0, ev: "", evLeft: 0, sinceEv: 0, lastEv: "", evShow: "", players: {}
+  };
+  order.forEach(function (u) { p.players[u] = { steps: 0, hearts: 0 }; });
+  return p;
+}
+
+function doStart() {
+  var keys = Object.keys(S.players).sort(function (x, y) {
+    var d = (S.players[x].joined || 0) - (S.players[y].joined || 0);
+    return d !== 0 ? d : (x < y ? -1 : 1);
+  });
+  if (keys.length !== 2) return;
+  commit(startPatch(S, keys));
+}
+
+function doStartLocal() {
+  var n0 = ($("n0") ? $("n0").value : "").trim() || "Player 1";
+  var n1 = ($("n1") ? $("n1").value : "").trim() || "Player 2";
+  S.players = {
+    L0: { name: n0, fig: draft.swap ? "queen" : "king", steps: 0, hearts: 0, joined: 1 },
+    L1: { name: n1, fig: draft.swap ? "king" : "queen", steps: 0, hearts: 0, joined: 2 }
+  };
+  viewer = "L0";
+  commit(startPatch(S, ["L0", "L1"]));
+}
+
+function doRoll() {
+  if (rolling || !S || S.step !== "roll") return;
+  rolling = true;
+  var d1 = 1 + rnd(6), d2 = 1 + rnd(6), count = 0, reduce = reducedMotion();
+  function face(a, b) { var x = $("dieA"), y = $("dieB"); if (x) x.textContent = a; if (y) y.textContent = b; }
+  function land() { face(d1, d2); setTimeout(function () { rolling = false; doMove(d1, d2); }, reduce ? 0 : 420); }
+  if (reduce) { land(); return; }
+  var iv = setInterval(function () {
+    count++;
+    face(1 + rnd(6), 1 + rnd(6));
+    if (count >= 8) { clearInterval(iv); land(); }
+  }, 70);
+}
+
+function doMove(d1, d2) {
+  var s = S;
+  if (!s || s.step !== "roll") return;
+  var a = s.order[s.turn], pl = s.players[a], n = d1 + d2;
+  var old = pl.steps || 0, nw = old + n, lapsDone = Math.floor(nw / N) - Math.floor(old / N);
+  var tile = TILES[nw % N], type = tile.t;
+  var hearts = (pl.hearts || 0) + lapsDone * LAP_HEARTS;
+  var note = pl.name + " rolled " + n + " and reached " + tile.n + ".";
+  if (lapsDone) note += " Full lap of the heart, +" + (lapsDone * LAP_HEARTS) + " hearts.";
+  var patch = { players: {}, roll: n, dice: [d1, d2], pick0: "", pick1: "", card: "", note: note };
+  patch.players[a] = { steps: nw, hearts: hearts };
+
+  if (type === "start") {
+    patch.players[a].hearts = hearts + 1;
+    patch.note = note + " Gate bonus, +1 heart.";
+    commit(finishTurn(s, patch));
+    return;
+  }
+  if (type === "event" && !s.ev) {
+    commit(finishTurn(s, patch, pickEvent(s.lastEv)));
+    return;
+  }
+  var pc = pickCard(s, type);
+  patch.card = JSON.stringify(pc.card);
+  patch.used = pc.used;
+  patch.step = pc.card.k === "guess" ? "pickG" : (pc.card.k === "tt" ? "tt" : "card");
+  commit(patch);
+}
+
+function endTalk(n) {
+  var s = S, c = getCard();
+  if (!s || s.step !== "card" || !c) return;
+  var a = s.order[s.turn], amt = boosted(s, c.type, n), patch = { players: {} };
+  if (amt) { var m = {}; m[a] = amt; addHearts(s, patch, m); }
+  patch.note = amt ? nm(a) + " earned " + amt + (amt > 1 ? " hearts." : " heart.") : (c.k === "dare" ? "No heart this time." : "Skipped that one.");
+  commit(finishTurn(s, patch));
+}
+
+function endStory(caught) {
+  var s = S, c = getCard();
+  if (!s || s.step !== "card" || !c) return;
+  var a = s.order[s.turn], p = s.order[1 - s.turn], patch = { players: {} }, m = {};
+  if (caught) { m[p] = 1; patch.note = nm(p) + " caught the lie. +1 heart."; }
+  else { m[a] = 2; patch.note = nm(a) + " fooled " + nm(p) + ". +2 hearts."; }
+  addHearts(s, patch, m);
+  commit(finishTurn(s, patch));
+}
+
+function endBoth(give) {
+  var s = S, c = getCard();
+  if (!s || s.step !== "card" || !c) return;
+  var patch = { players: {} };
+  if (give) {
+    var amt = boosted(s, c.type, 1), m = {};
+    s.order.forEach(function (u) { m[u] = amt; });
+    addHearts(s, patch, m);
+    patch.note = "A heart each" + (amt > 1 ? " (x" + amt + ")" : "") + ".";
+  } else {
+    patch.note = "Skipped.";
+  }
+  commit(finishTurn(s, patch));
+}
+
+function pickGuess(i) {
+  var s = S, c = getCard();
+  if (!s || !c || s.step !== "pickG") return;
+  var patch = { step: "pickS" };
+  patch["pick" + s.turn] = c.o[i];
+  patch.note = nm(s.order[s.turn]) + " locked in a guess.";
+  commit(patch);
+}
+
+function pickSelf(i) {
+  var s = S, c = getCard();
+  if (!s || !c || s.step !== "pickS") return;
+  var a = s.order[s.turn], real = c.o[i], guess = s["pick" + s.turn], patch = { step: "reveal" };
+  patch["pick" + (1 - s.turn)] = real;
+  if (guess === real) {
+    var m = {}; m[a] = 1; addHearts(s, patch, m);
+    patch.note = nm(a) + " guessed right.";
+  } else {
+    patch.note = nm(a) + " guessed wrong.";
+  }
+  commit(patch);
+}
+
+function pickThis(i) {
+  var s = S, c = getCard();
+  if (!s || !c || s.step !== "tt") return;
+  var slot = s.order.indexOf(me());
+  if (slot < 0 || s["pick" + slot]) return;
+  var patch = {};
+  patch["pick" + slot] = c.o[i];
+  commit(patch);
+}
+
+/* One free redraw per turn, for cards that do not fit. */
+function doSwap() {
+  var s = S, c = getCard();
+  if (!s || s.step !== "card" || !c || c.sw || c.k === "happen") return;
+  var pc = pickCard(s, c.type);
+  pc.card.sw = 1;
+  commit({ card: JSON.stringify(pc.card), used: pc.used, note: "New card, same tile." });
+}
+
+function customList(s) {
+  var cu = (s && s.custom) || {};
+  return Object.keys(cu).filter(function (id) { return cu[id] && !cu[id].off && cu[id].q; })
+    .map(function (id) { return { id: id, by: cu[id].by, q: cu[id].q, t: cu[id].t || 0 }; })
+    .sort(function (x, y) { return x.t - y.t; });
+}
+function addCustom(by) {
+  var el = $("cuIn"), text = (el ? el.value : "").trim().replace(/\s+/g, " ");
+  if (!text) { toast("Write the question first."); return; }
+  if (customList(S).filter(function (x) { return x.by === by; }).length >= 12) { toast("12 cards each is the limit."); return; }
+  var id = "c" + Date.now().toString(36) + rnd(1296).toString(36), patch = { custom: {} };
+  patch.custom[id] = { by: by, q: text.slice(0, 160), t: Date.now() };
+  draft.cuIn = ""; if (el) el.value = "";
+  commit(patch);
+}
+function removeCustom(id) {
+  if (!S || !S.custom || !S.custom[id]) return;
+  var patch = { custom: {} };
+  patch.custom[id] = { off: true, q: "" };
+  commit(patch);
+}
+
+function doNext() {
+  var s = S;
+  if (!s || (s.step !== "reveal" && s.step !== "tt_reveal")) return;
+  commit(finishTurn(s, { note: s.note || "" }));
+}
+
+function doEventContinue() {
+  if (!S || S.step !== "event") return;
+  commit({ step: "roll", evShow: "" });
+}
+
+function doPause() {
+  if (!S || S.phase !== "play") return;
+  if (S.paused) commit({ paused: false, endsAt: Date.now() + (S.remain || 0), remain: 0 });
+  else commit({ paused: true, remain: Math.max(0, (S.endsAt || 0) - Date.now()) });
+}
+
+function againPatch(s) {
+  var p = { phase: "lobby", step: "", card: "", roll: 0, dice: [0, 0], pick0: "", pick1: "", note: "", paused: false, remain: 0, endsAt: 0, ev: "", evLeft: 0, evShow: "", players: {} };
+  s.order.forEach(function (u) { p.players[u] = { steps: 0, hearts: 0 }; });
+  return p;
+}
+
+function tick() {
+  if (!S) return;
+  if (S.phase === "play") {
+    var left = remainingMs(S), el = $("clockT");
+    if (el) el.textContent = fmtClock(left);
+    if (!S.paused && S.endsAt && left <= 0 && !endHandled) {
+      endHandled = true;
+      if (!endRung) { endRung = true; bell(880, true); }
+      commit({ phase: "end", step: "", card: "", note: "Time is up." });
+      render();
+    }
+  }
+}
+
+
+/* ================= The lay of the land (shared by both views) ================= */
+
+var Land = (function () {
+  var CZ = 0.3;                       // the heart is grown and shrunk around this point
+  var POND = { x: 0, z: midPoint(0.5).z, rx: 2.35, rz: 1.02 };
+  var HILLS = [[-4.3, -3.3, 1.9, 0.55], [4.4, -3.1, 1.9, 0.6], [-3.3, 1.0, 1.4, 0.32], [3.4, 1.3, 1.5, 0.36], [-6.0, -1.2, 1.1, 0.25], [5.9, -0.9, 1.1, 0.25]];
+  var SPOTS = { gazebo: [-4.3, -3.3], light: [4.4, -3.1], cottage: [3.4, 1.3], bigtree: [-3.3, 1.0], picnic: [-2.3, 3.6] };
+  var BRIDGE = [midPoint(0.335), midPoint(0.665)];
+
+  var cache = {};
+  function outline(k) {
+    if (cache[k]) return cache[k];
+    var out = [], n = 160;
+    for (var i = 0; i < n; i++) {
+      var p = toWorld(heartXY(i / n * Math.PI * 2));
+      out.push([p.x * k, CZ + (p.z - CZ) * k]);
+    }
+    cache[k] = out;
+    return out;
+  }
+  function inside(x, z, k) {
+    var poly = outline(k), c = false;
+    for (var i = 0, j = poly.length - 1; i < poly.length; j = i++) {
+      var a = poly[i], b = poly[j];
+      if ((a[1] > z) !== (b[1] > z) && x < (b[0] - a[0]) * (z - a[1]) / (b[1] - a[1]) + a[0]) c = !c;
+    }
+    return c;
+  }
+  function inPond(x, z, pad) {
+    var rx = POND.rx + (pad || 0), rz = POND.rz + (pad || 0);
+    return Math.pow((x - POND.x) / rx, 2) + Math.pow((z - POND.z) / rz, 2) < 1;
+  }
+  function height(x, z) {
+    var h = 0;
+    HILLS.forEach(function (m) {
+      var d = (Math.pow(x - m[0], 2) + Math.pow(z - m[1], 2)) / (m[2] * m[2]);
+      if (d < 1) h = Math.max(h, m[3] * (1 - d) * (1 - d));
+    });
+    return h;
+  }
+  function nearStone(x, z, r) {
+    for (var i = 0; i < PH.length; i++) if (Math.pow(PH[i].x - x, 2) + Math.pow(PH[i].z - z, 2) < r * r) return true;
+    return false;
+  }
+  function nearSpot(x, z, r) {
+    for (var k in SPOTS) if (Math.pow(SPOTS[k][0] - x, 2) + Math.pow(SPOTS[k][1] - z, 2) < r * r) return true;
+    return false;
+  }
+
+  var seed = 11;
+  function rand() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+
+  /* Trees: [x, z, size, pink, jitter]. Rocks and flowers: [x, z, size, kind]. Same every time. */
+  var made = null;
+  function scatter() {
+    if (made) return made;
+    seed = 11;
+    var trees = [], flowers = [], rocks = [], tries = 0, x, z, i, ok;
+    while (trees.length < 62 && tries++ < 4000) {
+      x = (rand() - 0.5) * 16; z = -7.5 + rand() * 15;
+      if (!inside(x, z, 0.93) || inPond(x, z, 0.35) || nearStone(x, z, 0.85) || nearSpot(x, z, 1.0)) continue;
+      ok = true;
+      for (i = 0; i < trees.length; i++) if (Math.pow(trees[i][0] - x, 2) + Math.pow(trees[i][1] - z, 2) < 0.62) { ok = false; break; }
+      if (ok) trees.push([x, z, 0.26 + rand() * 0.16, rand() < 0.4 ? 1 : 0, rand()]);
+    }
+    tries = 0;
+    while (flowers.length < 90 && tries++ < 3000) {
+      x = (rand() - 0.5) * 16; z = -7.5 + rand() * 15;
+      if (!inside(x, z, 1.02) || inPond(x, z, 0.1) || nearStone(x, z, 0.55)) continue;
+      flowers.push([x, z, 0.05 + rand() * 0.035, Math.floor(rand() * 3)]);
+    }
+    var sh = outline(1.17);
+    for (i = 0; i < sh.length; i += 7) rocks.push([sh[i][0] + (rand() - 0.5) * 0.3, sh[i][1] + (rand() - 0.5) * 0.3, 0.12 + rand() * 0.14, 0]);
+    made = { trees: trees, flowers: flowers, rocks: rocks };
+    return made;
+  }
+
+  return { outline: outline, inside: inside, inPond: inPond, height: height, scatter: scatter, POND: POND, HILLS: HILLS, SPOTS: SPOTS, BRIDGE: BRIDGE, CZ: CZ };
+})();
+
+/* ================= Plain map (SVG) ================= */
+
+var Flat = (function () {
+  var U = 18, OX = 180, OY = 176, built = false, root = null;
+  var walkers = { king: { cur: 0, tar: 0, timer: 0 }, queen: { cur: 0, tar: 0, timer: 0 } };
+
+  function sx(x) { return OX + x * U; }
+  function sy(z) { return OY + z * U; }
+  function center(i) { var t = TILES[((i % N) + N) % N]; return { x: sx(t.x), y: sy(t.z) }; }
+  function poly(k) { return Land.outline(k).map(function (p) { return sx(p[0]).toFixed(1) + "," + sy(p[1]).toFixed(1); }).join(" "); }
+
+  var seed = 97;
+  function rand() { seed = (seed * 16807) % 2147483647; return seed / 2147483647; }
+
+  function overlays() {
+    seed = 97;
+    var rain = '<g class="ov ov-rain"><rect x="0" y="0" width="360" height="352" fill="#1b3a6b" opacity=".28"/>', i;
+    for (i = 0; i < 44; i++) { var rx = rand() * 360, ry = rand() * 340; rain += '<line x1="' + rx.toFixed(0) + '" y1="' + ry.toFixed(0) + '" x2="' + (rx - 5).toFixed(0) + '" y2="' + (ry + 14).toFixed(0) + '" stroke="#d6e9ff" stroke-width="1.4" stroke-linecap="round" opacity=".7"/>'; }
+    rain += "</g>";
+    var sun = '<g class="ov ov-sun"><circle cx="30" cy="30" r="230" fill="url(#sunGrad)"/></g>';
+    var par = '<g class="ov ov-parade">', cols = ["#ff7f9f", "#ffffff", "#d6336c", "#ffd0dc"];
+    for (i = 0; i < 26; i++) {
+      var t = TILES[Math.floor(rand() * N)];
+      par += '<g transform="translate(' + (sx(t.x) + (rand() - 0.5) * 16).toFixed(0) + " " + (sy(t.z) - 12 - rand() * 8).toFixed(0) + ") scale(.5)\" fill=\"" + cols[i % 4] + '" opacity=".9"><path d="' + HEART_PATH + '" transform="translate(-12 -12)"/></g>';
+    }
+    par += "</g>";
+    var px = sx(Land.SPOTS.picnic[0]), py = sy(Land.SPOTS.picnic[1]);
+    var pic = '<g class="ov ov-picnic"><rect x="' + (px - 14) + '" y="' + (py - 10) + '" width="28" height="20" rx="3" fill="#ff9bb8" stroke="#fff" stroke-width="2"/><path d="M' + px + " " + (py - 10) + "v20M" + (px - 14) + " " + py + 'h28" stroke="#fff" stroke-opacity=".8" stroke-width="2"/></g>';
+    var bx = sx(Land.POND.x - 1.1), by = sy(Land.POND.z + 0.25);
+    var boat = '<g class="ov ov-boat"><path d="M' + (bx - 11) + " " + by + "h22l-4 7h-14z\" fill=\"#a46a3b\" stroke=\"#fff\" stroke-width=\"1.3\"/><path d=\"M" + bx + " " + by + 'v-12l9 10z" fill="#fff"/></g>';
+    var fire = '<g class="ov ov-fire">', fc = ["#ffe45e", "#ff7f9f", "#8fdcff"];
+    for (var f = 0; f < 3; f++) {
+      var cx = 100 + f * 80, cy = 40 + (f % 2) * 34;
+      for (var a = 0; a < 12; a++) { var an = a / 12 * Math.PI * 2; fire += '<line x1="' + cx + '" y1="' + cy + '" x2="' + (cx + Math.cos(an) * 22).toFixed(1) + '" y2="' + (cy + Math.sin(an) * 22).toFixed(1) + '" stroke="' + fc[f] + '" stroke-width="2.4" stroke-linecap="round"/>'; }
+    }
+    fire += "</g>";
+    return rain + sun + par + pic + boat + fire;
+  }
+
+  function build() {
+    if (built) return;
+    var L = Land.scatter(), P = Land.POND, B = Land.BRIDGE, S0 = Land.SPOTS;
+    var h = '<svg class="park" viewBox="0 0 360 352" role="img" aria-label="Map of the heart-shaped island with the walking path">';
+    h += '<defs><radialGradient id="sunGrad"><stop offset="0" stop-color="#fff2b0" stop-opacity=".85"/><stop offset="1" stop-color="#fff2b0" stop-opacity="0"/></radialGradient>';
+    h += '<linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a2f6e"/><stop offset="1" stop-color="#5a5aa8"/></linearGradient></defs>';
+    h += '<rect x="1" y="1" width="358" height="350" rx="18" fill="url(#sea)"/>';
+    h += '<polygon points="' + poly(1.34) + '" fill="#6f7fd0" opacity=".55"/>';
+    h += '<polygon points="' + poly(1.22) + '" fill="#f2dfc4"/>';
+    h += '<polygon points="' + poly(1.15) + '" fill="#5aa873"/>';
+    Land.HILLS.forEach(function (m) { h += '<circle cx="' + sx(m[0]) + '" cy="' + sy(m[1]) + '" r="' + (m[2] * U * 0.8).toFixed(0) + '" fill="#84cf8c" opacity=".55"/>'; });
+    // walking path
+    var d = "";
+    for (var i = 0; i < N; i++) { var c = center(i); d += (i ? "L" : "M") + c.x.toFixed(1) + " " + c.y.toFixed(1); }
+    h += '<path d="' + d + 'Z" fill="none" stroke="#f2dfc4" stroke-width="7" stroke-linejoin="round" opacity=".9"/>';
+    // pond and bridge
+    h += '<ellipse cx="' + sx(P.x) + '" cy="' + sy(P.z) + '" rx="' + P.rx * U + '" ry="' + P.rz * U + '" fill="#6a8fe0" stroke="#f2dfc4" stroke-width="2.5"/>';
+    h += '<line x1="' + sx(B[0].x) + '" y1="' + sy(B[0].z) + '" x2="' + sx(B[1].x) + '" y2="' + sy(B[1].z) + '" stroke="#b98556" stroke-width="13" stroke-linecap="round"/>';
+    // landmarks
+    h += '<g transform="translate(' + sx(S0.gazebo[0]) + " " + sy(S0.gazebo[1]) + ')"><circle r="9" fill="#efe4f5"/><circle r="4.5" fill="#ff7f9f"/></g>';
+    h += '<g transform="translate(' + sx(S0.light[0]) + " " + sy(S0.light[1]) + ')"><circle r="12" fill="#ffc46b" opacity=".35"/><circle r="6" fill="#fff"/><circle r="3" fill="#ffc46b"/></g>';
+    h += '<g transform="translate(' + sx(S0.cottage[0]) + " " + sy(S0.cottage[1]) + ')"><rect x="-8" y="-6" width="16" height="12" rx="2" fill="#f2dfc4"/><path d="M-10-6L0-14 10-6z" fill="#d6336c"/></g>';
+    h += '<circle cx="' + sx(S0.bigtree[0]) + '" cy="' + sy(S0.bigtree[1]) + '" r="13" fill="#ffa3c4" stroke="rgba(0,0,0,.15)"/>';
+    L.trees.forEach(function (p) {
+      var col = p[3] ? (p[4] < 0.5 ? "#ffb3c7" : "#ff9bb8") : (p[4] < 0.5 ? "#3f9160" : "#357f53"), r = p[2] * U * 0.95;
+      h += '<circle cx="' + sx(p[0]).toFixed(1) + '" cy="' + sy(p[1]).toFixed(1) + '" r="' + r.toFixed(1) + '" fill="' + col + '" stroke="rgba(0,0,0,.14)" stroke-width="1"/>';
+    });
+    h += overlays();
+    // stones
+    PH.forEach(function (t) {
+      var x = sx(t.x), y = sy(t.z), ty = TYPES[t.t];
+      h += '<g><circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="8" fill="' + ty.color + '" stroke="#241a36" stroke-opacity=".35" stroke-width="1"/>';
+      h += '<g transform="translate(' + (x - 5.4).toFixed(1) + " " + (y - 5.4).toFixed(1) + ') scale(.45)" style="color:#1a1023">' + ICONS[t.t] + "</g></g>";
+    });
+    // ring and tokens
+    h += '<circle id="fRing" r="11.5" cx="0" cy="0" fill="none" stroke="#fff1c9" stroke-width="3" style="display:none"/>';
+    ["king", "queen"].forEach(function (f) {
+      var col = f === "king" ? "#5a36a8" : "#d6336c";
+      h += '<g id="tk-' + f + '" class="tk"><circle r="9" fill="' + col + '" stroke="#fff" stroke-width="2"/>';
+      h += '<path d="M-6-8l1.6-6 4.4 3.4 4.4-3.4 1.6 6z" fill="#f4c542" stroke="#8a6b10" stroke-width=".7"/>';
+      h += '<text id="tkt-' + f + '" y="3.5" text-anchor="middle" font-size="9.5" font-weight="800" fill="#fff"></text></g>';
+    });
+    h += "</svg>";
+    $("board").innerHTML = h;
+    root = $("board").firstChild;
+    built = true;
+    place("king", 0); place("queen", 0);
+  }
+
+  function place(fig, steps) {
+    var p = center(steps), el = $("tk-" + fig);
+    if (!el) return;
+    var dx = fig === "king" ? -6 : 6;
+    el.style.transform = "translate(" + (p.x + dx) + "px," + (p.y - 3) + "px)";
+    el.setAttribute("transform", "translate(" + (p.x + dx) + " " + (p.y - 3) + ")");
+  }
+
+  function stepWalk(fig) {
+    var w = walkers[fig];
+    if (w.cur === w.tar) { w.timer = 0; return; }
+    if (w.tar < w.cur) { w.cur = w.tar; place(fig, w.cur); w.timer = 0; return; }
+    w.cur++;
+    place(fig, w.cur);
+    w.timer = setTimeout(function () { stepWalk(fig); }, 150);
+  }
+
+  function setWalk(fig, steps) {
+    var w = walkers[fig];
+    if (steps - w.cur > 12) { w.cur = steps; w.tar = steps; place(fig, steps); return; }
+    w.tar = steps;
+    if (!w.timer) stepWalk(fig);
+  }
+
+  function sync() {
+    build();
+    root.setAttribute("class", "park" + (S && S.phase === "play" && S.ev ? " ev-" + S.ev : ""));
+    var list = [];
+    if (S && S.order.length === 2) {
+      S.order.forEach(function (u, k) { list.push({ fig: figOf(u, k), steps: S.players[u].steps || 0, name: S.players[u].name }); });
+      if (list[0].fig === list[1].fig) list[1].fig = list[0].fig === "king" ? "queen" : "king";
+    } else {
+      list = [{ fig: "king", steps: 0, name: "" }, { fig: "queen", steps: 0, name: "" }];
+    }
+    list.forEach(function (it) {
+      setWalk(it.fig, it.steps);
+      var t = $("tkt-" + it.fig);
+      if (t) t.textContent = it.name ? ini(it.name) : "";
+    });
+    var ring = $("fRing"), live = S && S.phase === "play" && S.order.length === 2;
+    if (ring) {
+      if (live) {
+        var c = center(S.players[S.order[S.turn]].steps || 0);
+        ring.setAttribute("cx", c.x); ring.setAttribute("cy", c.y);
+        ring.style.display = "";
+      } else ring.style.display = "none";
+    }
+  }
+
+  return { sync: sync, build: build };
+})();
+
+/* ================= 3D park (Three.js) ================= */
+
+var Park3D = (function () {
+  var st = null;
+
+  function tileY(i) { var t = TILES[((i % N) + N) % N]; return (Land.inPond(t.x, t.z, 0) ? 0.14 : 0) + 0.105; }
+  function tilePos(i) { var t = TILES[((i % N) + N) % N]; return { x: t.x, z: t.z, y: tileY(i) }; }
+
+  /* Dusk backdrop: top, middle and bottom of a screen-space gradient, per park event. */
+  var SKY = {
+    "":     ["#17123a", "#4a2f73", "#e98a7c"],
+    rain:   ["#10182f", "#253a5e", "#5b7596"],
+    sun:    ["#3a2a66", "#c8648a", "#ffc37a"],
+    parade: ["#2a1146", "#8a2f6e", "#ff8fa6"],
+    picnic: ["#1b2140", "#4c4a7a", "#f0a37a"],
+    boat:   ["#0f1d3f", "#2f4f8a", "#8fb6e0"],
+    fire:   ["#07061a", "#1a1238", "#3a2358"]
+  };
+  var skyCache = {};
+  function skyTex(ev) {
+    if (skyCache[ev]) return skyCache[ev];
+    var c = SKY[ev] || SKY[""], cv = document.createElement("canvas");
+    cv.width = 512; cv.height = 512;
+    var g = cv.getContext("2d"), gr = g.createLinearGradient(0, 0, 0, 512);
+    gr.addColorStop(0, c[0]); gr.addColorStop(0.55, c[1]); gr.addColorStop(1, c[2]);
+    g.fillStyle = gr; g.fillRect(0, 0, 512, 512);
+    g.fillStyle = "#fff";
+    var sd = 7;
+    for (var i = 0; i < 46; i++) {
+      sd = (sd * 16807) % 2147483647; var x = sd % 512; sd = (sd * 16807) % 2147483647; var y = sd % 250;
+      g.globalAlpha = (0.2 + (i % 5) * 0.13) * (1 - y / 300);
+      g.beginPath(); g.arc(x, y, i % 7 === 0 ? 1.6 : 1, 0, 6.3); g.fill();
+    }
+    g.globalAlpha = 1;
+    var tx = new THREE.CanvasTexture(cv);
+    skyCache[ev] = tx;
+    return tx;
+  }
+  var glowCache = null;
+  function glowTex() {
+    if (glowCache) return glowCache;
+    var cv = document.createElement("canvas"); cv.width = cv.height = 64;
+    var g = cv.getContext("2d"), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, "rgba(255,255,255,1)"); gr.addColorStop(0.25, "rgba(255,255,255,.55)"); gr.addColorStop(1, "rgba(255,255,255,0)");
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+    glowCache = new THREE.CanvasTexture(cv);
+    return glowCache;
+  }
+  function glowPoints(list, color, size, opacity) {
+    var arr = new Float32Array(list.length * 3);
+    list.forEach(function (p, i) { arr[i * 3] = p[0]; arr[i * 3 + 1] = p[1]; arr[i * 3 + 2] = p[2]; });
+    var geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(arr, 3));
+    var pts = new THREE.Points(geo, new THREE.PointsMaterial({ map: glowTex(), color: color, size: size, sizeAttenuation: true, transparent: true, opacity: opacity, blending: THREE.AdditiveBlending, depthWrite: false }));
+    pts.frustumCulled = false;
+    return pts;
+  }
+
+  /* Everything is lit the cheap way. No real-time shadows anywhere: they were most of the lag. */
+  function mat(color) { return new THREE.MeshLambertMaterial({ color: color }); }
+  function flat(color) { return new THREE.MeshBasicMaterial({ color: color }); }
+
+  function heartShape(scale) {
+    var sh = new THREE.Shape(), n = 56;
+    for (var i = 0; i <= n; i++) {
+      var t = i / n * Math.PI * 2;
+      var x = 16 * Math.pow(Math.sin(t), 3);
+      var y = 13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t);
+      if (i === 0) sh.moveTo(x * scale, y * scale); else sh.lineTo(x * scale, y * scale);
+    }
+    return sh;
+  }
+
+  function buildPiece(kind, hi) {
+    var g = new THREE.Group(), seg = hi ? 40 : 14, king = kind === "king";
+    var bodyMat = mat(king ? 0x6a44c0 : 0xe04a80), trimMat = mat(0xf4c542);
+    function lathe(p) { return new THREE.LatheGeometry(p.map(function (q) { return new THREE.Vector2(q[0], q[1]); }), seg); }
+    var prof = king
+      ? [[0, 0], [0.21, 0], [0.22, 0.03], [0.2, 0.06], [0.15, 0.1], [0.11, 0.3], [0.1, 0.45], [0.15, 0.5], [0.15, 0.53], [0.09, 0.57], [0.09, 0.6]]
+      : [[0, 0], [0.21, 0], [0.22, 0.03], [0.18, 0.07], [0.12, 0.22], [0.09, 0.42], [0.13, 0.47], [0.13, 0.5], [0.08, 0.54], [0.08, 0.58]];
+    g.add(new THREE.Mesh(lathe(prof), bodyMat));
+    var head = new THREE.Mesh(new THREE.SphereGeometry(king ? 0.12 : 0.115, hi ? 28 : 10, hi ? 20 : 8), bodyMat);
+    head.position.y = king ? 0.72 : 0.69; g.add(head);
+    if (hi) {
+      var tor = new THREE.Mesh(new THREE.TorusGeometry(0.15, 0.018, 10, 40), trimMat);
+      tor.rotation.x = Math.PI / 2; tor.position.y = 0.52; g.add(tor);
+    }
+    var band = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 0.05, seg), trimMat);
+    band.position.y = king ? 0.83 : 0.8; g.add(band);
+    if (king) {
+      var v = new THREE.Mesh(new THREE.BoxGeometry(0.04, 0.17, 0.04), trimMat); v.position.y = 0.95; g.add(v);
+      var h = new THREE.Mesh(new THREE.BoxGeometry(0.12, 0.04, 0.04), trimMat); h.position.y = 0.97; g.add(h);
+    } else {
+      for (var n = 0; n < 5; n++) {
+        var a = n / 5 * Math.PI * 2;
+        var sp = new THREE.Mesh(new THREE.CylinderGeometry(0, 0.035, 0.11, 6), trimMat);
+        sp.position.set(Math.cos(a) * 0.1, 0.88, Math.sin(a) * 0.1); g.add(sp);
+        if (hi) {
+          var ball = new THREE.Mesh(new THREE.SphereGeometry(0.018, 10, 8), trimMat);
+          ball.position.set(Math.cos(a) * 0.1, 0.94, Math.sin(a) * 0.1); g.add(ball);
+        }
+      }
+    }
+    g.scale.set(0.9, 0.9, 0.9);
+    var sh = new THREE.CircleGeometry(0.26, 14); sh.rotateX(-Math.PI / 2);
+    var shm = new THREE.Mesh(sh, new THREE.MeshBasicMaterial({ color: 0x1b1238, transparent: true, opacity: 0.28, depthWrite: false }));
+    shm.position.set(0.1, 0.006, 0.04); shm.scale.set(1.5, 1, 0.9); g.add(shm);
+    return g;
+  }
+
+  /* ---------- scenery: a heart-shaped island at dusk ---------- */
+
+  function heartGeo(k, depth) {
+    var o = Land.outline(k), sh = new THREE.Shape();
+    o.forEach(function (p, i) { if (i === 0) sh.moveTo(p[0], -p[1]); else sh.lineTo(p[0], -p[1]); });
+    var geo = depth ? new THREE.ExtrudeGeometry(sh, { depth: depth, bevelEnabled: false, curveSegments: 1 }) : new THREE.ShapeGeometry(sh);
+    geo.rotateX(-Math.PI / 2);
+    return geo;
+  }
+
+  /* One stone top per tile type: a round badge with the icon and the short name. */
+  function stoneTex(type, size) {
+    var ty = TYPES[type], cv = document.createElement("canvas");
+    cv.width = cv.height = size;
+    var g = cv.getContext("2d"), fam = "Figtree, system-ui, -apple-system, sans-serif", h = size / 2;
+    g.fillStyle = ty.color; g.beginPath(); g.arc(h, h, h, 0, 6.3); g.fill();
+    g.strokeStyle = "rgba(255,255,255,.8)"; g.lineWidth = size * 0.04; g.beginPath(); g.arc(h, h, h * 0.86, 0, 6.3); g.stroke();
+    g.fillStyle = "#1a1023"; g.textAlign = "center"; g.textBaseline = "middle";
+    g.font = "800 " + Math.round(size * (ty.label.length > 9 ? 0.105 : 0.13)) + "px " + fam;
+    g.fillText(ty.label, h, size * 0.73);
+    var tx = new THREE.CanvasTexture(cv);
+    try {
+      var img = new Image(), isz = size * 0.4;
+      img.onload = function () {
+        try { g.drawImage(img, (size - isz) / 2, size * 0.2, isz, isz); tx.needsUpdate = true; invalidate(); } catch (e) { /* stays text-only */ }
+      };
+      img.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">' + ICONS[type].replace(/currentColor/g, "#1a1023") + "</svg>");
+    } catch (e) { /* stays text-only */ }
+    return tx;
+  }
+
+  var dummy = null;
+  function instance(scene, list, geo, material, build) {
+    if (!list.length) return null;
+    var im = new THREE.InstancedMesh(geo, material, list.length);
+    list.forEach(function (p, n) { build(p, n); dummy.updateMatrix(); im.setMatrixAt(n, dummy.matrix); });
+    im.instanceMatrix.needsUpdate = true;
+    im.frustumCulled = false;
+    scene.add(im);
+    return im;
+  }
+  function put(scene, mesh, x, y, z) { mesh.position.set(x, y, z); scene.add(mesh); return mesh; }
+
+  function buildScenery(scene, hi) {
+    dummy = new THREE.Object3D();
+    var L = Land.scatter(), P = Land.POND, S0 = Land.SPOTS, seg = hi ? 40 : 20, i;
+
+    // sea, shallows, sand, grass
+    var sea = new THREE.CircleGeometry(60, 40); sea.rotateX(-Math.PI / 2);
+    put(scene, new THREE.Mesh(sea, mat(0x39418f)), 0, -0.34, 0);
+    put(scene, new THREE.Mesh(heartGeo(1.36), new THREE.MeshBasicMaterial({ color: 0x7f8fe0, transparent: true, opacity: 0.5, depthWrite: false })), 0, -0.3, 0);
+    put(scene, new THREE.Mesh(heartGeo(1.23, 0.3), mat(0xf2dfc4)), 0, -0.36, 0);
+    put(scene, new THREE.Mesh(heartGeo(1.15, 0.34), mat(0x5aa873)), 0, -0.34, 0);
+    // the last light of the day on the water
+    var sheen = new THREE.MeshBasicMaterial({ color: 0xffb08a, transparent: true, opacity: 0.3, blending: THREE.AdditiveBlending, depthWrite: false });
+    var sg = new THREE.CircleGeometry(1, 28); sg.rotateX(-Math.PI / 2);
+    [[-11, -3, 3.4, 0.5], [-10, 2.5, 2.2, 0.3], [-12.5, 6, 2.8, 0.35], [9.5, 7.5, 2.4, 0.3], [0, -8.5, 2.6, 0.3]].forEach(function (q) {
+      var m = new THREE.Mesh(sg, sheen); m.scale.set(q[2], 1, q[3]); put(scene, m, q[0], -0.29, q[1]);
+    });
+
+    // hills
+    var hg = new THREE.SphereGeometry(1, hi ? 20 : 12, hi ? 10 : 6, 0, Math.PI * 2, 0, Math.PI / 2);
+    instance(scene, Land.HILLS, hg, mat(0x6fbd80), function (m) { dummy.position.set(m[0], -0.02, m[1]); dummy.scale.set(m[2], m[3] * 1.15, m[2]); dummy.rotation.set(0, 0, 0); });
+
+    // sandy footpath under the stones
+    var pg = new THREE.CircleGeometry(0.62, 14); pg.rotateX(-Math.PI / 2);
+    var steps = [];
+    for (i = 0; i < N; i++) { var a = TILES[i], b = TILES[(i + 1) % N]; steps.push([a.x, a.z]); steps.push([(a.x + b.x) / 2, (a.z + b.z) / 2]); }
+    instance(scene, steps, pg, mat(0xe9d3b0), function (q) { dummy.position.set(q[0], 0.012, q[1]); dummy.scale.set(1, 1, 1); dummy.rotation.set(0, 0, 0); });
+
+    // pond, with the bridge where it happened
+    var pd = new THREE.CircleGeometry(1, seg); pd.rotateX(-Math.PI / 2);
+    var rim = new THREE.Mesh(pd, mat(0xf2dfc4)); rim.scale.set(P.rx + 0.1, 1, P.rz + 0.1); put(scene, rim, P.x, 0.016, P.z);
+    var water = new THREE.Mesh(pd, mat(0x6a8fe0)); water.scale.set(P.rx, 1, P.rz); put(scene, water, P.x, 0.02, P.z);
+    var ps = new THREE.Mesh(sg, sheen); ps.scale.set(0.8, 1, 0.16); put(scene, ps, P.x - 1.1, 0.026, P.z - 0.2);
+    var B = Land.BRIDGE, bl = Math.hypot(B[1].x - B[0].x, B[1].z - B[0].z), ba = Math.atan2(B[1].x - B[0].x, B[1].z - B[0].z);
+    var wood = mat(0xb98556), bridge = new THREE.Group();
+    var deck = new THREE.Mesh(new THREE.BoxGeometry(1.05, 0.08, bl), wood); deck.position.y = 0.1; bridge.add(deck);
+    [-0.5, 0.5].forEach(function (sx) {
+      var rail = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.05, bl), wood); rail.position.set(sx, 0.36, 0); bridge.add(rail);
+      for (var k = 0; k <= 6; k++) { var post = new THREE.Mesh(new THREE.BoxGeometry(0.05, 0.26, 0.05), wood); post.position.set(sx, 0.22, -bl / 2 + bl * k / 6); bridge.add(post); }
+    });
+    bridge.position.set((B[0].x + B[1].x) / 2, 0, (B[0].z + B[1].z) / 2); bridge.rotation.y = ba; scene.add(bridge);
+    var fairy = [];
+    for (i = 0; i <= 12; i++) [-0.5, 0.5].forEach(function (sx) {
+      var d = -bl / 2 + bl * i / 12;
+      fairy.push([bridge.position.x + Math.sin(ba) * d + Math.cos(ba) * sx, 0.42, bridge.position.z + Math.cos(ba) * d - Math.sin(ba) * sx]);
+    });
+
+    // trees, their long evening shadows, flowers, rocks
+    var foli = new THREE.IcosahedronGeometry(1, hi ? 1 : 0), trunk = new THREE.CylinderGeometry(0.04, 0.06, 0.34, 5);
+    var green = L.trees.filter(function (p) { return !p[3]; }), pink = L.trees.filter(function (p) { return p[3]; });
+    var blob = new THREE.CircleGeometry(1, 12); blob.rotateX(-Math.PI / 2);
+    instance(scene, L.trees, blob, new THREE.MeshBasicMaterial({ color: 0x1b1238, transparent: true, opacity: 0.2, depthWrite: false }), function (p) {
+      dummy.position.set(p[0] + p[2] * 1.3, Land.height(p[0], p[1]) * 0.6 + 0.03, p[1] + p[2] * 0.5); dummy.scale.set(p[2] * 2.1, 1, p[2] * 1.05); dummy.rotation.set(0, -0.36, 0);
+    });
+    instance(scene, L.trees, trunk, mat(0x7a5232), function (p) { dummy.position.set(p[0], Land.height(p[0], p[1]) + 0.16, p[1]); dummy.scale.set(1, 1, 1); dummy.rotation.set(0, 0, 0); });
+    function crown(p) { dummy.position.set(p[0], Land.height(p[0], p[1]) + 0.3 + p[2] * 0.8, p[1]); dummy.scale.set(p[2], p[2] * 1.05, p[2]); dummy.rotation.set(0, p[4] * 6, 0); }
+    instance(scene, green, foli, mat(0x3f9160), crown);
+    instance(scene, pink, foli, mat(0xffa3c4), crown);
+    var fg = new THREE.IcosahedronGeometry(1, 0), fcols = [0xffe45e, 0xff9bb8, 0xffffff];
+    [0, 1, 2].forEach(function (kd) {
+      instance(scene, L.flowers.filter(function (f) { return f[3] === kd; }), fg, flat(fcols[kd]), function (f) { dummy.position.set(f[0], Land.height(f[0], f[1]) + 0.04, f[1]); dummy.scale.set(f[2], f[2], f[2]); dummy.rotation.set(0, 0, 0); });
+    });
+    instance(scene, L.rocks, new THREE.DodecahedronGeometry(1, 0), mat(0x8d86a8), function (r) { dummy.position.set(r[0], -0.04, r[1]); dummy.scale.set(r[2] * 1.3, r[2], r[2]); dummy.rotation.set(0, r[0] * 3, 0); });
+
+    // gazebo on the west hill
+    var gx = S0.gazebo[0], gz = S0.gazebo[1], gy = Land.height(gx, gz), white = mat(0xefe4f5);
+    put(scene, new THREE.Mesh(new THREE.CylinderGeometry(0.62, 0.66, 0.08, 8), white), gx, gy + 0.04, gz);
+    for (i = 0; i < 6; i++) put(scene, new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.55, 5), white), gx + Math.cos(i * 1.047) * 0.5, gy + 0.34, gz + Math.sin(i * 1.047) * 0.5);
+    put(scene, new THREE.Mesh(new THREE.ConeGeometry(0.76, 0.42, 8), mat(0xff7f9f)), gx, gy + 0.82, gz);
+    // lighthouse on the east hill
+    var lx = S0.light[0], lz = S0.light[1], ly = Land.height(lx, lz);
+    put(scene, new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.3, 1.1, 10), white), lx, ly + 0.55, lz);
+    put(scene, new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.26, 0.2, 10), mat(0xd6336c)), lx, ly + 0.55, lz);
+    put(scene, new THREE.Mesh(new THREE.CylinderGeometry(0.16, 0.16, 0.2, 8), flat(0xffe9a8)), lx, ly + 1.2, lz);
+    put(scene, new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.24, 8), mat(0xd6336c)), lx, ly + 1.42, lz);
+    // cottage
+    var cx = S0.cottage[0], cz = S0.cottage[1], cy = Land.height(cx, cz);
+    put(scene, new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.42, 0.55), mat(0xf2dfc4)), cx, cy + 0.2, cz);
+    var roof = new THREE.Mesh(new THREE.ConeGeometry(0.62, 0.38, 4), mat(0xd6336c)); roof.rotation.y = Math.PI / 4; roof.scale.set(1, 1, 0.8); put(scene, roof, cx, cy + 0.6, cz);
+    put(scene, new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.16, 0.02), flat(0xffe9a8)), cx - 0.12, cy + 0.24, cz + 0.285);
+    // the big cherry tree
+    var tx = S0.bigtree[0], tz = S0.bigtree[1], tyy = Land.height(tx, tz);
+    put(scene, new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.14, 0.8, 6), mat(0x7a5232)), tx, tyy + 0.4, tz);
+    [[0, 1.1, 0, 0.72], [-0.42, 0.92, 0.2, 0.46], [0.44, 0.96, -0.12, 0.5], [0.1, 0.9, 0.46, 0.4]].forEach(function (q) {
+      var m = new THREE.Mesh(foli, mat(0xffa3c4)); m.scale.set(q[3], q[3] * 0.9, q[3]); put(scene, m, tx + q[0], tyy + q[1], tz + q[2]);
+    });
+
+    // lanterns along the middle path and around the shore, with pools of light
+    var lamps = [];
+    for (i = 1; i <= 9; i += 2) [-0.7, 0.7].forEach(function (off) {
+      var u = i / 10, p = midPoint(u), q = midPoint(u + 0.02), dx = q.x - p.x, dz = q.z - p.z, len = Math.hypot(dx, dz);
+      var x = p.x + (-dz / len) * off, z = p.z + (dx / len) * off;
+      if (!Land.inPond(x, z, 0.15)) lamps.push([x, z]);
+    });
+    var ring = Land.outline(0.97);
+    for (i = 4; i < ring.length; i += 13) lamps.push([ring[i][0], ring[i][1]]);
+    lamps.push([gx + 0.9, gz + 0.5]); lamps.push([cx - 0.7, cz + 0.6]);
+    instance(scene, lamps, new THREE.CylinderGeometry(0.016, 0.022, 0.5, 5), mat(0x3a2b4d), function (q) { dummy.position.set(q[0], Land.height(q[0], q[1]) + 0.26, q[1]); dummy.scale.set(1, 1, 1); dummy.rotation.set(0, 0, 0); });
+    var pool = new THREE.CircleGeometry(0.5, 16); pool.rotateX(-Math.PI / 2);
+    instance(scene, lamps, pool, new THREE.MeshBasicMaterial({ color: 0xffc46b, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending, depthWrite: false }), function (q) { dummy.position.set(q[0], Land.height(q[0], q[1]) * 0.7 + 0.05, q[1]); dummy.scale.set(1, 1, 1); dummy.rotation.set(0, 0, 0); });
+    var glows = lamps.map(function (q) { return [q[0], Land.height(q[0], q[1]) + 0.55, q[1]]; });
+    glows.push([lx, ly + 1.2, lz]); glows.push([lx, ly + 1.2, lz]);
+    scene.add(glowPoints(glows, 0xffc46b, 1.0, 0.9));
+    for (i = 0; i < 6; i++) fairy.push([gx + Math.cos(i * 1.047) * 0.62, gy + 0.62, gz + Math.sin(i * 1.047) * 0.62]);
+    scene.add(glowPoints(fairy, 0xffe0a3, 0.3, 0.95));
+
+    // the stones you walk on: one shared rim, one top per tile type
+    var onBridge = function (t) { return Land.inPond(t.x, t.z, 0); };
+    instance(scene, PH, new THREE.CylinderGeometry(0.44, 0.47, 0.1, hi ? 24 : 14), mat(0x4b3f73), function (t) { dummy.position.set(t.x, (onBridge(t) ? 0.14 : 0) + 0.05, t.z); dummy.scale.set(1, 1, 1); dummy.rotation.set(0, 0, 0); });
+    var top = new THREE.CircleGeometry(0.44, hi ? 24 : 14); top.rotateX(-Math.PI / 2);
+    Object.keys(TYPES).forEach(function (type) {
+      var list = PH.filter(function (t) { return t.t === type; });
+      instance(scene, list, top, new THREE.MeshBasicMaterial({ map: stoneTex(type, hi ? 192 : 128) }), function (t) { dummy.position.set(t.x, (onBridge(t) ? 0.14 : 0) + 0.102, t.z); dummy.scale.set(1, 1, 1); dummy.rotation.set(0, 0, 0); });
+    });
+  }
+
+  /* ---------- event props ---------- */
+
+  function buildFx(scene, hi) {
+    var fx = {};
+    // fireflies, the only thing that moves when nothing else does (Detailed view only)
+    var nFl = 26, fl = [], fseed = 23;
+    function fr() { fseed = (fseed * 16807) % 2147483647; return fseed / 2147483647; }
+    while (fl.length < nFl) { var qx = (fr() - 0.5) * 14, qz = -6.5 + fr() * 12; if (Land.inside(qx, qz, 1.0)) fl.push([qx, 0.3 + fr() * 0.6, qz, fr() * 6.28, 0.4 + fr() * 0.6]); }
+    fx.flies = glowPoints(fl.map(function (f) { return [f[0], f[1], f[2]]; }), 0xfff3a0, 0.16, 0.9);
+    fx.fliesD = fl; fx.flies.visible = hi; scene.add(fx.flies);
+    // picnic blanket
+    var pg = new THREE.Group();
+    var bl = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.02, 0.55), mat(0xff9bb8));
+    bl.position.y = 0.06; pg.add(bl);
+    var st1 = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.022, 0.08), mat(0xffffff)); st1.position.y = 0.062; pg.add(st1);
+    var st2 = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.022, 0.55), mat(0xffffff)); st2.position.y = 0.062; pg.add(st2);
+    var bk = new THREE.Mesh(new THREE.BoxGeometry(0.16, 0.1, 0.12), mat(0xa46a3b)); bk.position.set(0.1, 0.12, 0.05); pg.add(bk);
+    pg.position.set(Land.SPOTS.picnic[0], 0.03, Land.SPOTS.picnic[1]); pg.visible = false; scene.add(pg); fx.picnic = pg;
+
+    // rowboat
+    var bt = new THREE.Group();
+    var hull = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.1, 0.1, 12, 1), mat(0xa46a3b));
+    hull.scale.set(1.6, 1, 0.8); hull.position.y = 0.08; bt.add(hull);
+    var mast = new THREE.Mesh(new THREE.CylinderGeometry(0.01, 0.01, 0.4, 6), mat(0xffffff)); mast.position.y = 0.3; bt.add(mast);
+    var sail = new THREE.Mesh(new THREE.ConeGeometry(0.14, 0.32, 3), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+    sail.position.set(0.0, 0.32, 0); sail.rotation.z = 0; bt.add(sail);
+    bt.position.set(Land.POND.x - 1.1, 0.04, Land.POND.z); bt.visible = false; scene.add(bt); fx.boat = bt;
+
+    // sun disc
+    var sun = new THREE.Mesh(new THREE.CircleGeometry(0.7, 24), new THREE.MeshBasicMaterial({ color: 0xfff2b0, transparent: true, opacity: 0.85 }));
+    sun.position.set(-7.5, 5.2, -8.5); sun.visible = false; scene.add(sun); fx.sun = sun;
+
+    // rain
+    var nR = hi ? 110 : 60, rp = new Float32Array(nR * 6), rd = [];
+    for (var i = 0; i < nR; i++) rd.push([(Math.random() - 0.5) * 7, Math.random() * 4, (Math.random() - 0.5) * 7]);
+    var rgeo = new THREE.BufferGeometry();
+    rgeo.setAttribute("position", new THREE.BufferAttribute(rp, 3));
+    var rain = new THREE.LineSegments(rgeo, new THREE.LineBasicMaterial({ color: 0xcfe6ff, transparent: true, opacity: 0.55 }));
+    rain.frustumCulled = false; rain.visible = false; scene.add(rain); fx.rain = rain; fx.rainD = rd;
+
+    // confetti
+    var nC = hi ? 110 : 55, cp = new Float32Array(nC * 3), cc = new Float32Array(nC * 3), cd = [];
+    var pal = [new THREE.Color(0xff7a9c), new THREE.Color(0xffffff), new THREE.Color(0xd6336c), new THREE.Color(0xffd0dc), new THREE.Color(0xffe45e)];
+    for (i = 0; i < nC; i++) {
+      cd.push([(Math.random() - 0.5) * 7, Math.random() * 3.2, (Math.random() - 0.5) * 7]);
+      var c = pal[i % pal.length]; cc[i * 3] = c.r; cc[i * 3 + 1] = c.g; cc[i * 3 + 2] = c.b;
+    }
+    var cgeo = new THREE.BufferGeometry();
+    cgeo.setAttribute("position", new THREE.BufferAttribute(cp, 3));
+    cgeo.setAttribute("color", new THREE.BufferAttribute(cc, 3));
+    var conf = new THREE.Points(cgeo, new THREE.PointsMaterial({ size: 0.07, vertexColors: true }));
+    conf.frustumCulled = false; conf.visible = false; scene.add(conf); fx.conf = conf; fx.confD = cd;
+
+    // parade balloons
+    var bal = new THREE.Group(), bcols = [0xff7a9c, 0xffffff, 0xd6336c, 0xffb3c7], hs = heartShape(0.012);
+    for (i = 0; i < 12; i++) {
+      var hm = new THREE.Mesh(new THREE.ShapeGeometry(hs), new THREE.MeshBasicMaterial({ color: bcols[i % 4], side: THREE.DoubleSide }));
+      bal.add(hm);
+    }
+    bal.visible = false; scene.add(bal); fx.balloons = bal;
+
+    // fireworks
+    var nF = 3 * 46, fp = new Float32Array(nF * 3), fc = new Float32Array(nF * 3), fdirs = [];
+    var fcols = [new THREE.Color(0xffe45e), new THREE.Color(0xff7a9c), new THREE.Color(0x8fdcff)];
+    for (i = 0; i < nF; i++) {
+      var th = Math.random() * Math.PI * 2, ph = Math.acos(2 * Math.random() - 1), sp = 0.8 + Math.random() * 0.5;
+      fdirs.push([Math.sin(ph) * Math.cos(th) * sp, Math.cos(ph) * sp, Math.sin(ph) * Math.sin(th) * sp]);
+      var col = fcols[Math.floor(i / 46)]; fc[i * 3] = col.r; fc[i * 3 + 1] = col.g; fc[i * 3 + 2] = col.b;
+    }
+    var fgeo = new THREE.BufferGeometry();
+    fgeo.setAttribute("position", new THREE.BufferAttribute(fp, 3));
+    fgeo.setAttribute("color", new THREE.BufferAttribute(fc, 3));
+    var fire = new THREE.Points(fgeo, new THREE.PointsMaterial({ size: 0.09, vertexColors: true, transparent: true }));
+    fire.frustumCulled = false; fire.visible = false; scene.add(fire); fx.fire = fire; fx.fireD = fdirs;
+    return fx;
+  }
+
+  /* ---------- camera ---------- */
+
+  var CORNERS = [[-9.5, 0, -8.7], [9.5, 0, -8.7], [-6, 0, 6.5], [6, 0, 6.5], [0, 0, 8.7], [-9.5, 1.4, -3], [9.5, 1.9, -3]];
+
+  function camPos(tx, tz, D, el, az) {
+    return [tx + D * Math.sin(az) * Math.cos(el), D * Math.sin(el), tz + D * Math.cos(az) * Math.cos(el)];
+  }
+
+  function fitWhole(az, el) {
+    var key = az.toFixed(2) + "|" + el + "|" + st.camera.aspect.toFixed(3);
+    if (st.wholeKey === key) return st.wholeD;
+    var cam = st.camera, lo = 4, hi = 60, V = new THREE.Vector3();
+    for (var n = 0; n < 22; n++) {
+      var D = (lo + hi) / 2, p = camPos(0, 0, D, el, az);
+      cam.position.set(p[0], p[1], p[2]); cam.lookAt(0, 0, 0); cam.updateMatrixWorld(); cam.updateProjectionMatrix();
+      var ok = true;
+      for (var i = 0; i < CORNERS.length; i++) {
+        V.set(CORNERS[i][0], CORNERS[i][1], CORNERS[i][2]).project(cam);
+        if (Math.abs(V.x) > 0.96 || Math.abs(V.y) > 0.96) { ok = false; break; }
+      }
+      if (ok) hi = D; else lo = D;
+    }
+    st.wholeKey = key; st.wholeD = hi;
+    return hi;
+  }
+
+  function followDist() {
+    var t = Math.tan(st.camera.fov * Math.PI / 360), a = Math.max(0.5, st.camera.aspect);
+    return Math.max(5.4 / (2 * t * a), 4.2 / (2 * t) * 1.0);
+  }
+
+  function effectiveCam() {
+    return (S && S.phase === "play" && S.order.length === 2 && st.camMode === "follow") ? "follow" : "whole";
+  }
+
+  function goalFor() {
+    var cam = effectiveCam(), g = { el: cam === "follow" ? 0.92 : 0.84, tx: 0, tz: 0, D: 0, az: st.az + (cam === "follow" ? 0 : -0.5) };
+    if (cam === "follow") {
+      var u = S.order[S.step === "event" ? 1 - S.turn : S.turn], k = S.order.indexOf(u), fig = figOf(u, k), p = st.pieces[fig];
+      /* Lean toward the middle of the park so the walker has scenery beside them, not empty sky. */
+      g.tx = p.g.position.x * 0.8; g.tz = p.g.position.z * 0.9;
+      g.D = followDist();
+    } else {
+      g.D = fitWhole(g.az, g.el);
+    }
+    return g;
+  }
+
+  function placeCamera() {
+    var c = st.cur, p = camPos(c.tx, c.tz, c.D, c.el, c.az);
+    st.camera.position.set(p[0], p[1], p[2]);
+    st.camera.lookAt(c.tx, 0.1, c.tz);
+  }
+
+  function snapCamera() {
+    if (!S) return;
+    st.wholeKey = "";
+    var g = goalFor();
+    st.cur = { tx: g.tx, tz: g.tz, D: g.D, el: g.el, az: g.az };
+    placeCamera();
+  }
+
+  /* ---------- lifecycle ---------- */
+
+  function placePiece(p, i) { var a = tilePos(i); p.g.position.set(a.x + p.ox, a.y, a.z); }
+
+  function setTarget(p, steps) {
+    if (p.target === steps) return;
+    var base = p.path.length ? p.path[p.path.length - 1] : p.from;
+    if (steps > base && steps - base <= 12) {
+      for (var i = base + 1; i <= steps; i++) p.path.push(i);
+    } else {
+      p.path = []; p.from = steps; p.t = 0;
+      placePiece(p, steps);
+    }
+    p.target = steps;
+  }
+
+  function resize() {
+    if (!st) return;
+    var w = st.host.clientWidth, h = st.host.clientHeight;
+    if (!w || !h) return;
+    st.renderer.setSize(w, h, false);
+    st.camera.aspect = w / h;
+    st.camera.updateProjectionMatrix();
+    snapCamera();
+    invalidate();
+  }
+
+  function applyEvent(ev) {
+    var fx = st.fx;
+    st.scene.background = skyTex(SKY[ev] ? ev : "");
+    fx.picnic.visible = ev === "picnic";
+    fx.boat.visible = ev === "boat";
+    fx.sun.visible = ev === "sun";
+    fx.rain.visible = ev === "rain";
+    fx.conf.visible = ev === "parade";
+    fx.balloons.visible = ev === "parade";
+    fx.fire.visible = ev === "fire";
+    var L = st.lights;
+    L.hemi.intensity = 0.86; L.hemi.color.setHex(0xe6dcff); L.hemi.groundColor.setHex(0x6a4f8f);
+    L.sun.intensity = 0.4; L.sun.color.setHex(0xffc59a);
+    if (ev === "rain") { L.hemi.intensity *= 0.78; L.hemi.color.setHex(0xb8cdee); L.sun.intensity *= 0.5; }
+    if (ev === "sun") { L.hemi.intensity *= 1.15; L.hemi.color.setHex(0xfff1dc); L.sun.intensity = 0.75; L.sun.color.setHex(0xffd08a); }
+    if (ev === "parade") { L.hemi.color.setHex(0xffe0ec); L.sun.color.setHex(0xffd6e4); }
+    if (ev === "fire") { L.hemi.intensity *= 0.55; L.sun.intensity *= 0.4; L.hemi.color.setHex(0xc9c2ff); }
+    st.ev = ev;
+    st.anim = !reducedMotion() && (ev === "rain" || ev === "parade" || ev === "boat" || ev === "fire");
+    st.ambient = st.hi && !reducedMotion();
+    fx.flies.visible = st.hi && ev !== "rain";
+    st.fxT = 0; st.shDirty = true;
+    updateFx(0, true);
+  }
+
+
+  function updateFx(dt, force) {
+    var fx = st.fx, ev = st.ev, c = st.cur, t = (st.fxT += dt), i, d, arr;
+    if (fx.flies.visible) {
+      arr = fx.flies.geometry.attributes.position.array;
+      for (i = 0; i < fx.fliesD.length; i++) {
+        d = fx.fliesD[i];
+        arr[i * 3] = d[0] + Math.sin(t * d[4] * 0.7 + d[3]) * 0.22;
+        arr[i * 3 + 1] = d[1] + Math.sin(t * d[4] * 1.3 + d[3] * 2) * 0.1;
+        arr[i * 3 + 2] = d[2] + Math.cos(t * d[4] * 0.6 + d[3]) * 0.22;
+      }
+      fx.flies.geometry.attributes.position.needsUpdate = true;
+      fx.flies.material.opacity = 0.65 + Math.sin(t * 2.1) * 0.25;
+    }
+    if (ev === "rain") {
+      fx.rain.position.set(c.tx, 0, c.tz);
+      arr = fx.rain.geometry.attributes.position.array;
+      for (i = 0; i < fx.rainD.length; i++) {
+        d = fx.rainD[i];
+        if (!force) d[1] -= dt * 4.2;
+        if (d[1] < 0) d[1] += 4;
+        arr[i * 6] = d[0]; arr[i * 6 + 1] = d[1]; arr[i * 6 + 2] = d[2];
+        arr[i * 6 + 3] = d[0] - 0.02; arr[i * 6 + 4] = d[1] + 0.17; arr[i * 6 + 5] = d[2];
+      }
+      fx.rain.geometry.attributes.position.needsUpdate = true;
+    } else if (ev === "parade") {
+      fx.conf.position.set(c.tx, 0, c.tz);
+      arr = fx.conf.geometry.attributes.position.array;
+      for (i = 0; i < fx.confD.length; i++) {
+        d = fx.confD[i];
+        if (!force) { d[1] -= dt * 0.5; d[0] += Math.sin(t * 1.5 + i) * dt * 0.1; }
+        if (d[1] < 0) d[1] += 3.2;
+        arr[i * 3] = d[0]; arr[i * 3 + 1] = d[1]; arr[i * 3 + 2] = d[2];
+      }
+      fx.conf.geometry.attributes.position.needsUpdate = true;
+      var kids = fx.balloons.children, n = kids.length;
+      for (i = 0; i < n; i++) {
+        var u = ((t * 0.6 + i * (N / n)) % N + N) % N, a = Math.floor(u), f = u - a;
+        var pa = tilePos(a), pb = tilePos(a + 1);
+        kids[i].position.set(pa.x + (pb.x - pa.x) * f, 0.85 + Math.sin(t * 2 + i) * 0.06, pa.z + (pb.z - pa.z) * f);
+        kids[i].quaternion.copy(st.camera.quaternion);
+      }
+    } else if (ev === "boat") {
+      fx.boat.position.set(Land.POND.x - 1.1 + Math.sin(t * 0.5) * 0.4, 0.04 + Math.sin(t * 2.2) * 0.012, Land.POND.z + Math.cos(t * 0.5) * 0.1);
+      fx.boat.rotation.z = Math.sin(t * 1.8) * 0.06;
+    } else if (ev === "fire") {
+      fx.fire.position.set(c.tx, 2.4, c.tz - 0.6);
+      arr = fx.fire.geometry.attributes.position.array;
+      var per = 46;
+      for (var b = 0; b < 3; b++) {
+        var tt = ((t + b * 0.9) % 2.7), life = tt / 2.7;
+        for (i = 0; i < per; i++) {
+          d = fx.fireD[b * per + i];
+          var k = (b * per + i) * 3, sp = 1 - Math.pow(1 - Math.min(1, tt / 1.2), 2);
+          arr[k] = (b - 1) * 1.7 + d[0] * sp * 1.3;
+          arr[k + 1] = d[1] * sp * 1.3 - 0.45 * tt * tt * 0.4 + (b % 2 ? 0.5 : 0);
+          arr[k + 2] = d[2] * sp * 1.3 - b * 0.4;
+        }
+      }
+      fx.fire.material.opacity = 0.95;
+      fx.fire.geometry.attributes.position.needsUpdate = true;
+    }
+  }
+
+  function frame(now) {
+    if (!st) return;
+    st.raf = 0;
+    if (document.hidden || !st.vis) return;
+    var gap = now - st.last, moving = st.pieces.king.path.length || st.pieces.queen.path.length || st.settle > 0;
+    if (!moving && (st.anim || st.ambient) && gap < (st.anim ? (st.hi ? 33 : 50) : 80)) { st.raf = requestAnimationFrame(frame); return; }
+    var dt = Math.min(0.08, Math.max(0, gap / 1000)), busy = false;
+    if (moving && st.hi && gap < 400) {
+      st.slow = st.slow * 0.9 + gap * 0.1;
+      if (++st.slowN > 45 && st.slow > 38) { st.raf = 0; onSlow(); return; }
+    }
+    st.last = now;
+    ["king", "queen"].forEach(function (k) {
+      var p = st.pieces[k];
+      if (!p.path.length) return;
+      busy = true;
+      p.t += dt / 0.24;
+      var to = p.path[0], a = tilePos(p.from), b = tilePos(to), f = Math.min(p.t, 1);
+      p.g.position.set(a.x + (b.x - a.x) * f + p.ox, a.y + (b.y - a.y) * f + Math.sin(Math.PI * f) * 0.3, a.z + (b.z - a.z) * f);
+      if (p.t >= 1) { p.from = to; p.path.shift(); p.t = 0; if (!p.path.length) placePiece(p, p.from); }
+    });
+    var g = goalFor(), c = st.cur, k = 1 - Math.exp(-dt * 4.5);
+    if (reducedMotion()) k = 1;
+    c.tx += (g.tx - c.tx) * k; c.tz += (g.tz - c.tz) * k; c.D += (g.D - c.D) * k; c.el += (g.el - c.el) * k; c.az += (g.az - c.az) * k;
+    if (Math.abs(g.tx - c.tx) + Math.abs(g.tz - c.tz) + Math.abs(g.D - c.D) + Math.abs(g.el - c.el) + Math.abs(g.az - c.az) > 0.004) { busy = true; st.settle = 1; } else st.settle = 0;
+    placeCamera();
+    if (st.anim || st.ambient) { updateFx(dt, false); busy = true; }
+    st.renderer.render(st.scene, st.camera);
+    st.frames++;
+    if (busy) st.raf = requestAnimationFrame(frame);
+  }
+
+  function invalidate() {
+    if (st && !st.raf) { st.last = performance.now(); st.raf = requestAnimationFrame(frame); }
+  }
+
+  function init(modeName) {
+    var hi = modeName === "detailed", host = $("stagein"), renderer;
+    try {
+      renderer = new THREE.WebGLRenderer({ antialias: hi, alpha: false, powerPreference: hi ? "high-performance" : "low-power" });
+    } catch (e) { return false; }
+    if (!renderer || !renderer.getContext || !renderer.getContext()) return false;
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, hi ? 2 : 1.3));
+    host.appendChild(renderer.domElement);
+
+    var scene = new THREE.Scene();
+    scene.background = skyTex("");
+    var camera = new THREE.PerspectiveCamera(34, 1, 0.1, 80);
+    var hemi = new THREE.HemisphereLight(0xe6dcff, 0x6a4f8f, 0.86);
+    var sun = new THREE.DirectionalLight(0xffc59a, 0.4);
+    sun.position.set(-6, 5.2, 3);
+    scene.add(hemi); scene.add(sun);
+
+    st = {
+      renderer: renderer, scene: scene, camera: camera, host: host, hi: hi, top: 0.12, pieces: {}, ring: null, az: 0, raf: 0, last: 0,
+      ro: null, onResize: null, camMode: lsGet("weekone-cam") === "whole" ? "whole" : "follow", cur: { tx: 0, tz: 0, D: 20, el: 0.84, az: -1.1 },
+      wholeD: 20, wholeKey: "", slow: 0, vis: true, io: null, lights: { hemi: hemi, sun: sun }, ev: "", anim: false, ambient: false, settle: 0, slowN: 0, shDirty: true, fxT: 0, fx: null, frames: 0
+    };
+
+    buildScenery(scene, hi);
+    st.fx = buildFx(scene, hi);
+
+    var ring = new THREE.Mesh(new THREE.RingGeometry(0.47, 0.56, 32), new THREE.MeshBasicMaterial({ color: 0xfff1c9, side: THREE.DoubleSide }));
+    ring.rotation.x = -Math.PI / 2; ring.visible = false;
+    scene.add(ring); st.ring = ring;
+
+    ["king", "queen"].forEach(function (kind) {
+      var g = buildPiece(kind, hi);
+      scene.add(g);
+      st.pieces[kind] = { g: g, ox: kind === "king" ? -0.2 : 0.2, from: 0, path: [], t: 0, target: 0 };
+      placePiece(st.pieces[kind], 0);
+    });
+
+    var el = renderer.domElement, drag = null;
+    el.style.touchAction = "pan-y";
+    el.addEventListener("pointerdown", function (e) {
+      drag = { x: e.clientX, az: st.az };
+      try { el.setPointerCapture(e.pointerId); } catch (err) { /* optional */ }
+    });
+    el.addEventListener("pointermove", function (e) {
+      if (!drag || !st) return;
+      st.az = Math.max(-1.3, Math.min(1.3, drag.az - (e.clientX - drag.x) * 0.006));
+      var gg = goalFor(); st.cur.az = gg.az; st.cur.D = gg.D;
+      placeCamera(); invalidate();
+    });
+    var stop = function () { drag = null; };
+    el.addEventListener("pointerup", stop);
+    el.addEventListener("pointercancel", stop);
+    el.addEventListener("dblclick", function () { if (st) { st.az = 0; invalidate(); } });
+    el.addEventListener("webglcontextlost", function (e) { e.preventDefault(); onContextLost(); });
+
+    if (typeof IntersectionObserver === "function") {
+      st.io = new IntersectionObserver(function (en) { if (st) { st.vis = en[en.length - 1].isIntersecting; if (st.vis) invalidate(); } });
+      st.io.observe($("stage"));
+    }
+    if (typeof ResizeObserver === "function") { st.ro = new ResizeObserver(resize); st.ro.observe(host); }
+    else { st.onResize = resize; window.addEventListener("resize", resize); }
+    applyEvent("");
+    resize();
+    return true;
+  }
+
+  function sync() {
+    if (!st) return;
+    var list = [];
+    if (S && S.order.length === 2) {
+      S.order.forEach(function (u, k) { list.push({ fig: figOf(u, k), steps: S.players[u].steps || 0 }); });
+      if (list[0].fig === list[1].fig) list[1].fig = list[0].fig === "king" ? "queen" : "king";
+    } else {
+      list = [{ fig: "king", steps: 0 }, { fig: "queen", steps: 0 }];
+    }
+    list.forEach(function (it) { setTarget(st.pieces[it.fig], it.steps); });
+    st.shDirty = true;
+    var live = S && S.phase === "play" && S.order.length === 2;
+    st.ring.visible = !!live;
+    if (live) {
+      var a = tilePos(S.players[S.order[S.turn]].steps || 0);
+      st.ring.position.set(a.x, a.y + 0.012, a.z);
+    }
+    var ev = S && S.phase === "play" ? (S.ev || "") : "";
+    if (ev !== st.ev) applyEvent(ev);
+    invalidate();
+  }
+
+  function setCam(c) {
+    if (!st) return;
+    st.camMode = c === "whole" ? "whole" : "follow";
+    lsSet("weekone-cam", st.camMode);
+    invalidate();
+  }
+
+  function destroy() {
+    if (!st) return;
+    var s = st; st = null;
+    if (s.raf) cancelAnimationFrame(s.raf);
+    if (s.ro) s.ro.disconnect();
+    if (s.io) s.io.disconnect();
+    if (s.onResize) window.removeEventListener("resize", s.onResize);
+    s.scene.traverse(function (o) {
+      if (o.geometry) o.geometry.dispose();
+      if (o.material) {
+        (Array.isArray(o.material) ? o.material : [o.material]).forEach(function (m) { if (m.map) m.map.dispose(); m.dispose(); });
+      }
+    });
+    s.renderer.dispose();
+    if (s.renderer.domElement.parentNode) s.renderer.domElement.parentNode.removeChild(s.renderer.domElement);
+  }
+
+  return {
+    init: init, sync: sync, destroy: destroy, setCam: setCam,
+    active: function () { return !!st; },
+    cam: function () { return st ? st.camMode : "follow"; },
+    wake: function () { invalidate(); },
+    stats: function () { return st ? { frames: st.frames, raf: st.raf, ev: st.ev } : null; }
+  };
+})();
+
+
+/* ================= View state ================= */
+
+var viewMode = (function () { var v = lsGet("weekone-view4"); return v === "detailed" || v === "flat" ? v : "smooth"; })();
+var built = null, view3dFailed = false, lastClock = "", lastBanner = "", stageBig = false;
+
+/* Detailed view on a phone that cannot keep up: step down once, quietly. */
+function onSlow() {
+  if (viewMode !== "detailed") return;
+  viewMode = "smooth"; lsSet("weekone-view4", viewMode);
+  toast("Switched to the Smooth view to keep the walk fluid.");
+  render();
+}
+
+function threeOk() { return typeof THREE !== "undefined" && !view3dFailed; }
+
+function onContextLost() {
+  view3dFailed = true;
+  Park3D.destroy();
+  built = null;
+  render();
+  toast("3D paused. Switched to the plain map.");
+}
+
+function drawViewBar() {
+  var el = $("views");
+  if (!threeOk()) { el.innerHTML = ""; return; }
+  var h = '<span class="seglab">View</span>';
+  [["smooth", "Smooth"], ["detailed", "Detailed"], ["flat", "Plain"]].forEach(function (v) {
+    h += '<button class="segb' + (viewMode === v[0] ? " on" : "") + '" data-act="view" data-v="' + v[0] + '">' + v[1] + "</button>";
+  });
+  if (viewMode !== "flat") {
+    var cam = Park3D.active() ? Park3D.cam() : "follow";
+    h += '<span class="seglab sp">Camera</span>';
+    [["follow", "Follow"], ["whole", "Whole island"]].forEach(function (v) {
+      h += '<button class="segb' + (cam === v[0] ? " on" : "") + '" data-act="cam" data-v="' + v[0] + '">' + v[1] + "</button>";
+    });
+    h += '<span class="hintx">Drag the island sideways to turn it. Smooth is the fastest 3D view, Detailed is sharper with fireflies, Plain is a flat map.</span>';
+  }
+  el.innerHTML = h;
+}
+
+function ensureView() {
+  var want = viewMode;
+  if (!threeOk()) want = "flat";
+  if (want === built) return;
+  Park3D.destroy();
+  if (want !== "flat") {
+    $("stage").hidden = false;
+    if (!Park3D.init(want)) {
+      view3dFailed = true; want = "flat";
+      toast("3D is not available here. Using the plain map.");
+    }
+  }
+  built = want;
+  $("stage").hidden = want === "flat";
+  $("board").hidden = want !== "flat";
+  drawViewBar();
+}
+
+function renderBoard() {
+  ensureView();
+  if (built === "flat") Flat.sync(); else Park3D.sync();
+}
+
+
+/* ================= Small builders ================= */
+
+function pill(type, text) {
+  var t = TYPES[type] || TYPES.spark;
+  return '<span class="pill" style="background:' + t.color + '">' + iconSVG(type, "pico") + esc(text || t.label) + "</span>";
+}
+function noteLine() { return S.note ? '<p class="note">' + esc(S.note) + "</p>" : ""; }
+function plural(n, w) { return n + " " + w + (n === 1 ? "" : "s"); }
+function avatar(u) {
+  var k = S.order.indexOf(u);
+  return '<span class="av ' + figOf(u, k < 0 ? 0 : k) + '">' + esc(ini(nm(u))) + "</span>";
+}
+
+/* The strip that always says whose move it is and what they do. */
+function nowStrip(u, title, sub) {
+  var mine = mode === "local" || u === me();
+  return '<div class="now' + (mine ? " mine" : "") + '">' + avatar(u) + '<div class="nowt"><b>' + esc(title) + "</b>" + (sub ? "<span>" + esc(sub) + "</span>" : "") + "</div></div>";
+}
+function whose(u) { return mode !== "local" && u === me() ? "Your move" : nm(u) + "’s move"; }
+function youOr(u) { return mode !== "local" && u === me() ? "You" : nm(u); }
+
+function steps(list) {
+  var h = '<ol class="steps">';
+  list.forEach(function (t) { h += "<li>" + esc(t) + "</li>"; });
+  return h + "</ol>";
+}
+
+var lastCardId = "";
+/* The paper card. body is trusted HTML built here; everything user-made is escaped before it gets in. */
+function qcard(c, body, foot) {
+  var pl = S.players[S.order[S.turn]], tile = TILES[tileOf(pl)], ty = TYPES[c.type] || TYPES.spark;
+  var fresh = c.id !== lastCardId;
+  var h = '<article class="qcard' + (fresh ? " deal" : "") + '" style="--tc:' + ty.color + '">';
+  h += '<header class="qhead">' + iconSVG(c.type, "qico") + "<b>" + esc(ty.long) + "</b><span>" + esc(tile.n) + "</span></header>";
+  h += '<div class="qbody">' + body + "</div>";
+  var tags = "";
+  if (c.ev && EVENTS[c.ev]) tags += '<span class="qtag">' + esc(EVENTS[c.ev].name) + "</span>";
+  if (foot) tags += '<span class="qtag">' + esc(foot) + "</span>";
+  var E = S.ev ? EVENTS[S.ev] : null;
+  if (E && E.boost.indexOf(c.type) >= 0) tags += '<span class="qtag dbl">Pays double</span>';
+  if (tags) h += '<footer class="qfoot">' + tags + "</footer>";
+  return h + "</article>";
+}
+function qtext(c, an, pn, cls) {
+  var h = '<p class="q' + (cls ? " " + cls : "") + '">' + esc(fill(c.q, an, pn)) + "</p>";
+  if (c.f && !cls) h += '<p class="qfollow"><b>Then</b> ' + esc(fill(c.f, an, pn)) + "</p>";
+  return h;
+}
+
+function opts(list, act) {
+  var h = '<div class="opts">';
+  list.forEach(function (o, i) { h += '<button class="opt" data-act="' + act + '" data-i="' + i + '">' + esc(o) + "</button>"; });
+  return h + "</div>";
+}
+function chips(items, cur, act, disabled) {
+  var h = '<div class="seg">';
+  items.forEach(function (it) {
+    h += '<button class="segb' + (String(cur) === String(it[0]) ? " on" : "") + '" data-act="' + act + '" data-v="' + it[0] + '"' + (disabled ? " disabled" : "") + ">" + esc(it[1]) + "</button>";
+  });
+  return h + "</div>";
+}
+var DURS = [[15, "15 min"], [30, "30 min"], [45, "45 min"], [60, "1 hour"], [90, "1.5 hours"]];
+function settingsHTML(canEdit) {
+  var en = ENERGY[S.energy] || ENERGY.cozy;
+  var h = '<div class="field"><span class="lab">How long to play</span>' + chips(DURS, S.dur, "dur", !canEdit) + "</div>";
+  h += '<div class="field"><span class="lab">Energy</span>' + chips([["cozy", "Cozy"], ["balanced", "Balanced"], ["lively", "Lively"]], S.energy, "energy", !canEdit);
+  h += '<p class="hint">' + esc(en.blurb) + "</p></div>";
+  h += '<div class="field"><label class="lab" for="prizeIn">What does the winner get?</label><input id="prizeIn" type="text" maxlength="60" autocomplete="off" placeholder="Loser plans the next date"' + (canEdit ? "" : " disabled") + ' value="' + esc(draft.prizeIn != null ? draft.prizeIn : (S.prize || "")) + '"></div>';
+  return h;
+}
+
+var HOW = [
+  ["Take turns", "On your turn, tap the dice. Your piece walks that many stones. The path runs up one shore of the heart, down through the middle, up the other shore and down through the middle again."],
+  ["Read the card", "The stone you land on deals a card. The card always says who does what."],
+  ["Collect hearts", "Cards pay hearts. A full lap of the heart, both shores, pays 3 more."],
+  ["Watch the island", "Now and then it rains, a parade passes or fireworks start. That changes the mood of the questions and makes some stones pay double for a few turns. Nobody has to do anything."],
+  ["Time is up", "When the clock hits zero, whoever has more hearts wins the prize you agreed on."]
+];
+function howHTML() {
+  var h = '<ol class="how5">';
+  HOW.forEach(function (r) { h += "<li><b>" + esc(r[0]) + "</b><span>" + esc(r[1]) + "</span></li>"; });
+  return h + "</ol>";
+}
+
+/* Write-your-own cards, shown in the lobby. */
+function customHTML(by, canEdit) {
+  var all = customList(S), mine = all.filter(function (x) { return x.by === by; }), theirs = all.length - mine.length;
+  var h = '<div class="field cu"><span class="lab">Secret cards for each other</span>';
+  h += '<p class="hint">Write questions only the two of you would get. They turn up on Our Story tiles, for the other one to answer.</p>';
+  if (canEdit) {
+    h += '<div class="curow"><input id="cuIn" type="text" maxlength="160" autocomplete="off" placeholder="What did you think when I..." aria-label="Your question" value="' + esc(draft.cuIn || "") + '"><button class="send" data-act="cuAdd">Add</button></div>';
+  }
+  if (mine.length) {
+    h += '<ul class="culist">';
+    mine.forEach(function (x) { h += "<li><span>" + esc(x.q) + '</span><button class="cux" data-act="cuDel" data-id="' + esc(x.id) + '" aria-label="Remove this card">Remove</button></li>'; });
+    h += "</ul>";
+  }
+  if (theirs > 0) h += '<p class="hint strong">' + plural(theirs, "hidden card") + " waiting for you on the island.</p>";
+  return h + "</div>";
+}
+
+/* ================= Header, score, banner ================= */
+
+function inGame() { return S && S.order.indexOf(me()) >= 0; }
+
+function renderClock() {
+  var h = "";
+  if (S && S.phase === "play" && !timeIsUp(S)) {
+    h = '<span class="ck' + (S.paused ? " paused" : "") + '" aria-label="Time left"><span id="clockT">' + fmtClock(remainingMs(S)) + "</span></span>";
+    if (inGame()) h += '<button class="pausebtn" data-act="pause">' + (S.paused ? "Resume" : "Pause") + "</button>";
+  }
+  if (h === lastClock) return;
+  lastClock = h;
+  $("clock").innerHTML = h;
+}
+
+var prevHearts = {}, lastScore = "";
+function burst(k, n) {
+  if (reducedMotion()) return;
+  var host = $("score"), chip = host.children[k];
+  if (!chip) return;
+  chip.classList.remove("pop"); void chip.offsetWidth; chip.classList.add("pop");
+  for (var i = 0; i < Math.min(6, n * 2 + 1); i++) {
+    var el = document.createElement("span");
+    el.className = "fly";
+    el.innerHTML = heart();
+    el.style.left = (55 + Math.random() * 35) + "%";
+    el.style.animationDelay = (i * 90) + "ms";
+    chip.appendChild(el);
+    (function (node) { setTimeout(function () { if (node.parentNode) node.parentNode.removeChild(node); }, 1600 + i * 90); })(el);
+  }
+}
+function renderScore() {
+  var el = $("score");
+  if (!S || S.phase === "lobby" || S.order.length !== 2) { if (lastScore) { el.innerHTML = ""; lastScore = ""; } prevHearts = {}; return; }
+  var h = "", gains = [];
+  S.order.forEach(function (u, k) {
+    var p = S.players[u], on = S.phase === "play" && S.turn === k, n = p.hearts || 0;
+    if (prevHearts[u] != null && n > prevHearts[u]) gains.push([k, n - prevHearts[u]]);
+    prevHearts[u] = n;
+    h += '<div class="chip' + (on ? " on" : "") + '"><span class="av ' + figOf(u, k) + '">' + esc(ini(p.name)) + '</span><span class="cn">' + esc(p.name) +
+      '</span><span class="ch">' + heart() + "<b>" + n + '</b></span><span class="lapn">Lap ' + (lapOf(p) + 1) + "</span></div>";
+  });
+  if (h !== lastScore) { lastScore = h; el.innerHTML = h; }
+  if (gains.length) { chime(); gains.forEach(function (g) { burst(g[0], g[1]); }); }
+}
+
+function renderBanner() {
+  var el = $("banner"), h = "";
+  if (S && S.phase === "play" && S.ev && EVENTS[S.ev]) {
+    var E = EVENTS[S.ev];
+    h = '<div class="evb" style="--ec:' + E.color + '"><b>' + esc(E.name) + "</b><span>" + esc(E.rule) + " " + plural(S.evLeft || 0, "turn") + " left.</span></div>";
+  }
+  if (h === lastBanner) return;
+  lastBanner = h;
+  el.innerHTML = h;
+}
+
+/* ================= Panels ================= */
+
+function pendingHTML() {
+  var h = '<p class="eyebrow">Connecting</p><h2 class="big">Rowing out to the island</h2>';
+  if (showEscape) h += '<p class="muted">Taking longer than expected.</p><button class="btn ghost" data-act="goLocal">Play on one phone instead</button>';
+  return h;
+}
+
+function lobbyHTML() {
+  var h = "";
+  if (mode === "local") {
+    var by = draft.cby === "L1" ? "L1" : "L0";
+    h += '<p class="eyebrow">One phone, passed back and forth</p><h2 class="big">Who is walking tonight?</h2>';
+    h += '<div class="two"><div class="field"><label class="lab" for="n0">Player 1 · ' + (draft.swap ? "Queen" : "King") + '</label><input id="n0" type="text" maxlength="16" autocomplete="off" autocapitalize="words" value="' + esc(draft.n0 || "") + '"></div>';
+    h += '<div class="field"><label class="lab" for="n1">Player 2 · ' + (draft.swap ? "King" : "Queen") + '</label><input id="n1" type="text" maxlength="16" autocomplete="off" autocapitalize="words" value="' + esc(draft.n1 || "") + '"></div></div>';
+    h += '<button class="btn link" data-act="swap">Swap crowns</button>';
+    h += settingsHTML(true);
+    h += '<div class="field"><span class="lab">Who is writing cards now</span>' + chips([["L0", draft.n0 || "Player 1"], ["L1", draft.n1 || "Player 2"]], by, "cby") + "</div>";
+    h += customHTML(by, true);
+    h += '<button class="btn" data-act="startLocal">Start the walk</button>';
+    h += '<div class="howbox"><p class="eyebrow">How it works</p>' + howHTML() + "</div>";
+    return h;
+  }
+  var keys = Object.keys(S.players).sort(function (x, y) { return (S.players[x].joined || 0) - (S.players[y].joined || 0); });
+  var mine = S.players[uid];
+  h += '<p class="eyebrow">Two phones, one island</p><h2 class="big">' + (mine ? "You are in, " + esc(mine.name) : "Join the walk") + "</h2>";
+  if (readOnly) h += '<div class="warn">This account can watch but cannot save moves. Ask whoever shared this page to give you edit access, or switch to one phone below.</div>';
+  if (syncError) h += '<div class="warn">Lost the connection to the game. Reload the page, or switch to one phone below.</div>';
+  h += '<div class="slots">';
+  for (var i = 0; i < 2; i++) {
+    var k = keys[i];
+    h += k
+      ? '<div class="slot"><span class="av ' + figOf(k, i) + '">' + esc(ini(S.players[k].name)) + "</span><span>" + esc(S.players[k].name) + (k === uid ? " (you)" : "") + '</span><span class="role">' + (figOf(k, i) === "king" ? "King" : "Queen") + "</span></div>"
+      : '<div class="slot empty">Waiting for the other player</div>';
+  }
+  h += "</div>";
+  if (!mine && keys.length < 2 && !readOnly) {
+    var otherFig = keys.length ? figOf(keys[0], 0) : null;
+    var curFig = draft.fig && draft.fig !== otherFig ? draft.fig : (otherFig === "king" ? "queen" : "king");
+    h += '<div class="field"><span class="lab">Play as</span><div class="seg">';
+    ["king", "queen"].forEach(function (f) {
+      h += '<button class="segb' + (curFig === f ? " on" : "") + '" data-act="fig" data-v="' + f + '"' + (otherFig === f ? " disabled" : "") + ">" + (f === "king" ? "King" : "Queen") + "</button>";
+    });
+    h += "</div></div>";
+    h += '<div class="field"><label class="lab" for="nameIn">Your name</label><input id="nameIn" type="text" maxlength="16" autocomplete="off" autocapitalize="words" value="' + esc(draft.nameIn || lsGet("weekone-name") || "") + '"></div>';
+    h += '<button class="btn" data-act="join">I am in</button>';
+  } else if (!mine && keys.length >= 2) {
+    h += '<p class="muted">This game already has two players.</p>';
+  } else if (mine) {
+    h += settingsHTML(true);
+    h += customHTML(uid, !readOnly);
+    if (keys.length < 2) h += '<p class="muted">Send the link to your partner. The walk starts when they join.</p>';
+    else h += '<button class="btn" data-act="start">Start the walk</button>';
+  }
+  h += '<div class="howbox"><p class="eyebrow">How it works</p>' + howHTML() + "</div>";
+  h += '<button class="btn link" data-act="goLocal">Playing on one phone? Switch to pass-the-phone mode</button>';
+  return h;
+}
+
+function coverHTML(target) {
+  return '<p class="eyebrow">Secret pick</p><h2 class="big">Pass the phone to ' + esc(nm(target)) + '</h2><p class="muted">Only ' + esc(nm(target)) + ' should see the next screen.</p><button class="btn" data-act="viewer" data-uid="' + esc(target) + '">I am ' + esc(nm(target)) + "</button>";
+}
+
+function rollHTML(role, an) {
+  var a = S.order[S.turn], pl = S.players[a], tile = TILES[tileOf(pl)], h = "";
+  var dice = '<span class="d" id="dieA">' + (S.dice && S.dice[0] ? S.dice[0] : "?") + '</span><span class="d" id="dieB">' + (S.dice && S.dice[1] ? S.dice[1] : "?") + "</span>";
+  if (role === "a" || mode === "local") {
+    h += nowStrip(a, whose(a), "Tap the dice to walk.");
+    h += '<button class="dice" data-act="roll" aria-label="Roll the dice">' + dice + "</button>";
+    h += '<p class="muted center">' + youOr(a) + (youOr(a) === "You" ? " are" : " is") + " at " + esc(tile.n) + ".</p>";
+  } else {
+    h += nowStrip(a, whose(a), an + " is about to roll. Nothing for you to do yet.");
+    h += '<div class="dice ghost">' + dice + "</div>";
+  }
+  return h + noteLine();
+}
+
+function eventHTML() {
+  var E = EVENTS[S.evShow];
+  if (!E) return '<button class="btn" data-act="evgo">Keep walking</button>';
+  var h = '<div class="evcard" style="--ec:' + E.color + '"><p class="eyebrow">The island changes</p><h2 class="big">' + esc(E.name) + "</h2>";
+  h += '<p class="evtxt">' + esc(E.blurb) + "</p>";
+  h += '<p class="rule">' + esc(E.rule) + " Lasts " + plural(E.len, "turn") + ".</p></div>";
+  if (S.evShow === "fire") h += '<p class="verdict win">+1 heart each, right now.</p>';
+  h += '<p class="hint">Nothing to roll for this. It just sets the mood. ' + esc(nm(S.order[S.turn])) + " walks next.</p>";
+  h += '<button class="btn" data-act="evgo">Got it, keep walking</button>';
+  return h + noteLine();
+}
+
+function swapBtn(c) { return c.sw ? "" : '<button class="btn link" data-act="redraw">Different question</button>'; }
+
+function talkHTML(role, an, pn, c) {
+  var a = S.order[S.turn], p = S.order[1 - S.turn], amt = boosted(S, c.type, 1), hs = "+" + plural(amt, "heart"), h = "";
+  var local = mode === "local", iAmA = !local && role === "a", iAmP = !local && role === "p";
+  if (c.k === "happen") {
+    h += nowStrip(a, "Both of you", "Do this one together.");
+    h += qcard(c, '<p class="qsub">' + esc(c.t) + "</p>" + qtext(c, an, pn));
+    h += '<div class="btns"><button class="btn" data-act="both1">Done, ' + hs + ' each</button><button class="btn ghost" data-act="both0">Skip it</button></div>';
+    return h + noteLine();
+  }
+  if (c.k === "bench") {
+    h += nowStrip(a, "Both of you", "A calm moment. No rush.");
+    h += qcard(c, qtext(c, an, pn));
+    h += '<div class="btns"><button class="btn" data-act="both1">Done, ' + hs + ' each</button><button class="btn ghost" data-act="both0">Skip it</button></div>';
+    return h + noteLine();
+  }
+  if (c.k === "collect") {
+    h += nowStrip(a, whose(a), (iAmA ? "Say it" : an + " says it") + " to " + (iAmP ? "you" : pn) + ", out loud.");
+    h += qcard(c, qtext(c, an, pn));
+    if (role === "a" || local) h += '<div class="btns"><button class="btn" data-act="talk1">Said it. Collect ' + hs + "</button>" + swapBtn(c) + "</div>";
+    else h += '<p class="wait">' + esc(an) + " collects the heart after saying it.</p>";
+    return h + noteLine();
+  }
+  if (c.k === "story") {
+    h += nowStrip(a, whose(a), iAmP ? "Listen closely. One of the three is a lie." : "Tell all three with a straight face.");
+    h += qcard(c, qtext(c, an, pn));
+    h += steps([(iAmA ? "You tell" : an + " tells") + " three things.", (iAmP ? "You say" : pn + " says") + " which one is the lie.", "Caught: +1 heart for " + (iAmP ? "you" : pn) + ". Fooled: +2 for " + (iAmA ? "you" : an) + "."]);
+    if (role === "p" || local) h += '<div class="btns"><button class="btn" data-act="caught">' + (local ? esc(pn) + " caught the lie" : "I caught the lie") + '</button><button class="btn ghost" data-act="fooled">' + esc(an) + " fooled " + (local ? esc(pn) : "me") + "</button></div>";
+    else h += '<p class="wait">' + esc(pn) + " taps the result.</p>";
+    return h + noteLine();
+  }
+  if (c.k === "dare") {
+    h += nowStrip(a, whose(a), iAmP ? an + " does the dare. You are the judge." : (iAmA ? "Do it now. " + pn + " is the judge." : an + " does it. " + pn + " is the judge."));
+    h += qcard(c, qtext(c, an, pn));
+    if (role === "p" || local) h += '<div class="btns"><button class="btn" data-act="talk1">Nailed it, ' + hs + " for " + esc(an) + '</button><button class="btn ghost" data-act="talk0">Not this time</button></div>';
+    else h += '<p class="wait">' + esc(pn) + " decides if it earns the heart.</p>" + swapBtn(c);
+    return h + noteLine();
+  }
+  // talk
+  var foot = c.by ? "Written by " + nm(c.by) + (c.by === a ? "" : ", for " + (iAmA ? "you" : an)) : "";
+  h += nowStrip(a, whose(a), iAmP ? an + " answers first. Then it is your turn to answer it." : (iAmA ? "Answer out loud. Then " + pn + " answers it too." : an + " answers out loud. Then " + pn + " answers it too."));
+  h += qcard(c, qtext(c, an, pn), foot);
+  if (role !== "s" || local) {
+    h += '<div class="btns"><button class="btn" data-act="talk1">Done, ' + hs + " for " + (iAmA ? "me" : esc(an)) + "</button>";
+    h += '<div class="row2">' + swapBtn(c) + '<button class="btn link" data-act="talk0">Skip, no heart</button></div></div>';
+  }
+  return h + noteLine();
+}
+
+function guessHTML(role, an, pn, c) {
+  var a = S.order[S.turn], p = S.order[1 - S.turn], h = "", local = mode === "local";
+  var body = '<p class="qsub">In ' + esc(pn) + "’s words</p>" + qtext(c, an, pn);
+  if (S.step === "pickG") {
+    h += nowStrip(a, whose(a), role === "a" || local ? "Guess what " + pn + " will pick. A match is +1 heart." : an + " is guessing your answer. Keep a poker face.");
+    h += qcard(c, body);
+    if (role === "a" || local) h += opts(c.o, "pickG");
+    else h += '<p class="wait">You answer for real right after.</p>';
+  } else {
+    h += nowStrip(p, whose(p), role === "p" || local ? "Now pick your real answer." : pn + " is picking the real answer.");
+    h += qcard(c, body);
+    if (role === "p" || local) h += opts(c.o, "pickS");
+    else h += '<p class="wait">Your guess is locked in.</p>';
+  }
+  return h + noteLine();
+}
+
+function revealHTML(role, an, pn, c) {
+  var ga = S["pick" + S.turn], re = S["pick" + (1 - S.turn)], hit = ga === re, a = S.order[S.turn];
+  var h = nowStrip(a, hit ? "A match" : "Not a match", hit ? "+1 heart for " + an + "." : pn + ", tell the story behind your answer.");
+  h += qcard(c, '<p class="qsub">In ' + esc(pn) + "’s words</p>" + qtext(c, an, pn, "small") +
+    '<div class="rv"><div><span class="who">' + esc(an) + ' guessed</span><span class="ans">' + esc(ga) + '</span></div><div class="' + (hit ? "hit" : "") + '"><span class="who">' + esc(pn) + ' said</span><span class="ans">' + esc(re) + "</span></div></div>");
+  if (role !== "s") h += '<button class="btn" data-act="next">Next turn</button>';
+  return h;
+}
+
+function ttLabel(c) { return { wyr: "Would you rather", who: "Vote in secret", take: "Agree or disagree?", never: "Never have I ever" }[c.type] || "This or that"; }
+function ttBody(c, an, pn, small) {
+  if (!c.q) return '<p class="qsub">' + ttLabel(c) + "</p>" + (small ? "" : '<p class="q">' + esc(c.o[0]) + ' <span class="or">or</span> ' + esc(c.o[1]) + "</p>");
+  return '<p class="qsub">' + ttLabel(c) + "</p>" + qtext(c, an, pn, small ? "small" : "");
+}
+function ttVerdict(c, same) {
+  if (c.type === "take") return same ? ["You agree", "+1 heart each."] : ["You disagree", "One minute each to change the other's mind."];
+  if (c.type === "never") {
+    if (same) return S.pick0 === "Never" ? ["Neither of you", "+1 heart each."] : ["Both of you", "+1 heart each. Now tell the stories."];
+    return ["Only one of you", (S.pick0 === "I have" ? nm(S.order[0]) : nm(S.order[1])) + " tells the story."];
+  }
+  return same ? ["Same pick", "+1 heart each."] : ["Different picks", "Tell each other why."];
+}
+
+function ttHTML(c, an, pn) {
+  var slot = S.order.indexOf(me()), a = S.order[S.turn], h = "";
+  var body = ttBody(c, an, pn, false);
+  if (slot < 0) return nowStrip(a, "Both of you", "Both players are picking.") + qcard(c, body);
+  var who = mode === "local" ? nm(me()) + ", pick in secret" : "Both of you, pick in secret";
+  if (S["pick" + slot]) {
+    h += nowStrip(S.order[1 - slot], "Locked in", "Waiting for " + nm(S.order[1 - slot]) + " to pick.");
+    return h + qcard(c, body) + noteLine();
+  }
+  h += nowStrip(me(), who, (c.q ? "Same answer as " : "Same pick as ") + nm(S.order[1 - slot]) + " means +1 heart each.");
+  h += qcard(c, body) + opts(c.o, "pickT");
+  return h + noteLine();
+}
+
+function ttRevealHTML(role, c, an, pn) {
+  var same = S.pick0 === S.pick1, a = S.order[S.turn];
+  var vd = ttVerdict(c, same), h = nowStrip(a, vd[0], vd[1]);
+  var body = ttBody(c, an, pn, true);
+  body += '<div class="rv"><div class="' + (same ? "hit" : "") + '"><span class="who">' + esc(nm(S.order[0])) + ' picked</span><span class="ans">' + esc(S.pick0) + '</span></div><div class="' + (same ? "hit" : "") + '"><span class="who">' + esc(nm(S.order[1])) + ' picked</span><span class="ans">' + esc(S.pick1) + "</span></div></div>";
+  h += qcard(c, body);
+  if (role !== "s") h += '<button class="btn" data-act="next">Next turn</button>';
+  return h;
+}
+
+function pausedHTML() {
+  var h = '<p class="eyebrow">Paused</p><h2 class="big">Taking a break</h2><p class="muted">The clock is stopped with ' + fmtClock(remainingMs(S)) + " left.</p>";
+  if (inGame()) h += '<button class="btn" data-act="pause">Resume</button>';
+  return h;
+}
+
+function endHTML() {
+  var a = S.order[0], b = S.order[1];
+  if (!a || !b) return '<p class="muted">Game over.</p>';
+  var pa = S.players[a], pb = S.players[b];
+  var win = pa.hearts === pb.hearts ? null : (pa.hearts > pb.hearts ? a : b);
+  var h = '<p class="bing">BING</p><p class="eyebrow center">Time is up</p>';
+  h += '<h2 class="big center">' + (win ? esc(nm(win)) + " wins the walk" : "A tie. You both win") + "</h2>";
+  h += '<div class="final"><div class="row' + (win === a ? " win" : "") + '">' + avatar(a) + "<span>" + esc(pa.name) + '</span><span class="lapn">' + plural(lapOf(pa), "lap") + '</span><span class="ch">' + heart() + "<b>" + pa.hearts + "</b></span></div>";
+  h += '<div class="row' + (win === b ? " win" : "") + '">' + avatar(b) + "<span>" + esc(pb.name) + '</span><span class="lapn">' + plural(lapOf(pb), "lap") + '</span><span class="ch">' + heart() + "<b>" + pb.hearts + "</b></span></div></div>";
+  h += S.prize ? '<p class="prize"><span>' + (win ? esc(nm(win)) + " wins" : "You share") + "</span>" + esc(S.prize) + "</p>" : "";
+  h += '<p class="muted center">' + plural(S.turns || 0, "turn") + " walked together." + (S.prize ? "" : " " + esc(FINAL_NOTE)) + "</p>";
+  if (inGame()) h += '<button class="btn" data-act="again">Walk again</button>';
+  return h;
+}
+
+function playHTML() {
+  var m = me(), a = S.order[S.turn], p = S.order[1 - S.turn], an = nm(a), pn = nm(p);
+  var role = m === a ? "a" : (m === p ? "p" : "s");
+  var h = "", c = getCard(), n = needs(S);
+  if (readOnly) h += '<div class="warn">This account cannot save moves. Ask whoever shared this page for edit access, or switch to one phone.</div>';
+  if (syncError) h += '<div class="warn">Lost the connection. Reload the page to keep playing.</div>';
+  if (S.paused) return h + pausedHTML();
+  if (mode === "local" && isPrivate(S.step) && n.indexOf(viewer) === -1) return h + coverHTML(n[0]);
+  switch (S.step) {
+    case "roll": return h + rollHTML(role, an);
+    case "event": return h + eventHTML();
+    case "card": return c ? h + talkHTML(role, an, pn, c) : h + '<p class="muted">Dealing the card.</p>';
+    case "pickG":
+    case "pickS": return c ? h + guessHTML(role, an, pn, c) : h;
+    case "reveal": return c ? h + revealHTML(role, an, pn, c) : h;
+    case "tt": return c ? h + ttHTML(c, an, pn) : h;
+    case "tt_reveal": return c ? h + ttRevealHTML(role, c, an, pn) : h;
+  }
+  return h + '<p class="muted">Waiting for the next move.</p>';
+}
+
+function panelHTML() {
+  if (mode === "pending" || !S) return pendingHTML();
+  if (S.phase === "lobby") return lobbyHTML();
+  if (S.phase === "end" || timeIsUp(S)) return endHTML();
+  return playHTML();
+}
+
+function syncViewer() {
+  if (mode !== "local" || !S || S.phase !== "play") return;
+  var n = needs(S);
+  if (n.length && !isPrivate(S.step) && n.indexOf(viewer) === -1) viewer = n[0];
+}
+
+function renderPanel() {
+  syncViewer();
+  var html = panelHTML();
+  if (html === lastPanel) return;
+  var ae = document.activeElement, focusId = ae && ae.tagName === "INPUT" ? ae.id : null;
+  var sel = focusId ? [ae.selectionStart, ae.selectionEnd] : null;
+  lastPanel = html;
+  var el = $("panel"), c = S && S.phase === "play" ? getCard() : null;
+  el.innerHTML = html;
+  el.className = "panel" + (S && S.phase === "play" && !S.paused ? " live" : "");
+  lastCardId = c ? c.id : "";
+  if (focusId && $(focusId)) {
+    var f = $(focusId);
+    f.focus();
+    try { f.setSelectionRange(sel[0], sel[1]); } catch (e) { /* not supported for this input */ }
+  }
+}
+
+function renderLegend() {
+  var h = '<p class="eyebrow">How it works</p>' + howHTML() + '<p class="eyebrow">The tiles</p><div class="legend">';
+  Object.keys(TYPES).forEach(function (k) {
+    h += '<div class="lg">' + pill(k) + "<span>" + esc(TYPES[k].desc) + "</span></div>";
+  });
+  h += "</div>";
+  $("helpbody").innerHTML = h;
+}
+
+function renderFoot() {
+  var h = '<button class="btn link" data-act="help">How to play</button>';
+  h += '<button class="btn link" data-act="sound">' + (soundOn ? "Sound on" : "Sound off") + "</button>";
+  if (S && S.phase === "play" && inGame()) {
+    h += '<button class="btn link" data-act="restart">' + (confirming ? "Tap again to end the game" : "End game") + "</button>";
+  }
+  h += '<span class="mode">' + (mode === "sync" ? "Live between your two phones" : (mode === "local" ? "One phone, pass it back and forth" : "")) + "</span>";
+  $("foot").innerHTML = h;
+}
+
+/* Page-level state for layout: which phase we are in and whether a card is up. */
+function renderShell() {
+  var w = $("wrap"), play = S && S.phase === "play" && !timeIsUp(S);
+  var cardUp = play && !S.paused && S.step !== "roll";
+  w.className = "wrap " + (play ? "is-play" : (S && S.phase === "end" || (S && timeIsUp(S)) ? "is-end" : "is-lobby")) + (cardUp && !stageBig ? " card-up" : "") + (built === "flat" ? " flatview" : "");
+}
+
+function render() {
+  renderClock();
+  renderScore();
+  renderBanner();
+  renderPanel();
+  renderBoard();
+  renderShell();
+  renderFoot();
+  Chat.refresh();
+  var sig = S ? [S.phase, S.step, S.turn, (S.used || []).length, S.evShow || "", mode === "local" ? viewer : ""].join("|") : "";
+  if (lastSig !== null && sig !== lastSig) { try { window.scrollTo(0, 0); } catch (e) { /* not available */ } }
+  lastSig = sig;
+}
+
+/* ================= Chat bubble (two-phone mode) ================= */
+
+var Chat = (function () {
+  var col = null, unsub = null, msgs = [], open = false, first = true, maxT = 0;
+  var seen = Number(lsGet("weekone-chat-seen") || 0) || 0;
+
+  function start(db) {
+    try {
+      col = db.collection("chat");
+      unsub = col.orderBy("t", "desc").limit(60).onSnapshot(onSnap, function () { /* chat is optional */ });
+    } catch (e) { col = null; }
+    refresh();
+  }
+
+  function onSnap(qs) {
+    var list = [];
+    qs.docs.forEach(function (d) { var v = d.data(); if (v && v.tx) list.push(v); });
+    list.sort(function (a, b) { return (a.t || 0) - (b.t || 0); });
+    var prev = maxT;
+    msgs = list;
+    maxT = list.length ? list[list.length - 1].t || 0 : 0;
+    if (!first && !open) {
+      var fresh = list.filter(function (m) { return m.u !== uid && m.t > prev; });
+      if (fresh.length) { var m = fresh[fresh.length - 1]; toast(m.n + ": " + String(m.tx).slice(0, 60)); bell(740, false); }
+    }
+    first = false;
+    renderList();
+    refresh();
+  }
+
+  function unread() {
+    return msgs.filter(function (m) { return m.u !== uid && (m.t || 0) > seen; }).length;
+  }
+
+  function markSeen() {
+    if (maxT > seen) { seen = maxT; lsSet("weekone-chat-seen", String(seen)); }
+  }
+
+  function fmt(t) {
+    var d = new Date(t || 0), h = d.getHours(), m = d.getMinutes();
+    return (h < 10 ? "0" : "") + h + ":" + (m < 10 ? "0" : "") + m;
+  }
+
+  function renderList() {
+    var el = $("chatlist");
+    if (!el) return;
+    if (!msgs.length) { el.innerHTML = '<p class="chatempty">No messages yet. Say hi.</p>'; return; }
+    var h = "";
+    msgs.forEach(function (m) {
+      var mine = m.u === uid;
+      h += '<div class="msg ' + (mine ? "me" : "them") + '">' + (mine ? "" : '<span class="mn">' + esc(m.n) + "</span>") + '<span class="mt">' + esc(m.tx) + '</span><span class="mm">' + fmt(m.t) + "</span></div>";
+    });
+    el.innerHTML = h;
+    if (open) { markSeen(); el.scrollTop = el.scrollHeight; }
+  }
+
+  function refresh() {
+    var btn = $("chatBtn"), badge = $("chatBadge");
+    if (!btn) return;
+    var show = mode === "sync" && !!col;
+    btn.hidden = !show || open;
+    var n = show ? unread() : 0;
+    badge.textContent = n > 9 ? "9+" : String(n || "");
+    badge.hidden = !n;
+    if (!show && open) setOpen(false);
+  }
+
+  function setOpen(v) {
+    open = !!v;
+    $("chat").hidden = !open;
+    if (open) {
+      renderList(); markSeen();
+      var el = $("chatlist"); if (el) el.scrollTop = el.scrollHeight;
+      var inp = $("chatIn"); if (inp) { try { inp.focus(); } catch (e) { /* optional */ } }
+    }
+    refresh();
+  }
+
+  function send() {
+    var inp = $("chatIn"), text = (inp.value || "").trim();
+    if (!text || !col) return;
+    if (readOnly) { toast("This account cannot send messages."); return; }
+    var me0 = S && S.players && S.players[uid];
+    var name = (me0 && me0.name) || lsGet("weekone-name") || "Guest";
+    inp.value = ""; draft.chatIn = "";
+    col.add({ u: uid, n: name, tx: text.slice(0, 280), t: Date.now() }).catch(function () {
+      inp.value = text; toast("Message not sent. Check your connection.");
+    });
+  }
+
+  return { start: start, refresh: refresh, open: function () { setOpen(true); }, close: function () { setOpen(false); }, send: send, isOpen: function () { return open; } };
+})();
+
+
+/* ================= Events and start ================= */
+
+document.addEventListener("click", function (e) {
+  var t = e.target.closest ? e.target.closest("[data-act]") : null;
+  if (!t || t.disabled) return;
+  var act = t.getAttribute("data-act"), i = parseInt(t.getAttribute("data-i"), 10), v = t.getAttribute("data-v");
+  unlockAudio();
+  switch (act) {
+    case "join": doJoin(); break;
+    case "start": doStart(); break;
+    case "goLocal": startLocalMode(); break;
+    case "startLocal": doStartLocal(); break;
+    case "fig": draft.fig = v; lastPanel = ""; renderPanel(); break;
+    case "swap": draft.swap = !draft.swap; renderPanel(); break;
+    case "cby": draft.cby = v; renderPanel(); break;
+    case "cuAdd": addCustom(mode === "local" ? (draft.cby === "L1" ? "L1" : "L0") : uid); if (mode === "local") { lastPanel = ""; renderPanel(); } break;
+    case "cuDel": removeCustom(t.getAttribute("data-id")); break;
+    case "redraw": doSwap(); break;
+    case "help": $("help").hidden = false; break;
+    case "helpx": $("help").hidden = true; break;
+    case "stage": stageBig = !stageBig; renderShell(); break;
+    case "dur": commit({ dur: parseInt(v, 10) }); break;
+    case "energy": commit({ energy: v }); break;
+    case "view": viewMode = v; lsSet("weekone-view4", viewMode); render(); break;
+    case "cam": if (Park3D.active()) { Park3D.setCam(v); drawViewBar(); Park3D.sync(); } break;
+    case "sound": soundOn = !soundOn; lsSet("weekone-sound", soundOn ? "on" : "off"); if (soundOn) bell(520, false); renderFoot(); break;
+    case "pause": doPause(); break;
+    case "chat": Chat.open(); break;
+    case "chatx": Chat.close(); break;
+    case "roll": doRoll(); break;
+    case "evgo": doEventContinue(); break;
+    case "talk1": endTalk(1); break;
+    case "talk0": endTalk(0); break;
+    case "caught": endStory(true); break;
+    case "fooled": endStory(false); break;
+    case "both1": endBoth(true); break;
+    case "both0": endBoth(false); break;
+    case "pickG": pickGuess(i); break;
+    case "pickS": pickSelf(i); break;
+    case "pickT": pickThis(i); break;
+    case "next": doNext(); break;
+    case "viewer": viewer = t.getAttribute("data-uid"); if (mode === "local") saveLocal(); render(); break;
+    case "again": if (S) commit(againPatch(S)); break;
+    case "restart":
+      if (confirming) { confirming = false; clearTimeout(confirmTimer); if (S) commit(againPatch(S)); }
+      else { confirming = true; renderFoot(); confirmTimer = setTimeout(function () { confirming = false; renderFoot(); }, 3000); }
+      break;
+  }
+});
+
+document.addEventListener("input", function (e) {
+  var el = e.target;
+  if (el && el.id) draft[el.id] = el.value;
+});
+
+document.addEventListener("change", function (e) {
+  if (e.target && e.target.id === "prizeIn" && S) commit({ prize: String(e.target.value || "").trim().slice(0, 60) });
+});
+
+document.addEventListener("submit", function (e) { if (e.target && e.target.id === "chatform") { e.preventDefault(); Chat.send(); } });
+document.addEventListener("keydown", function (e) {
+  if (e.key === "Enter" && e.target && e.target.id === "cuIn") { e.preventDefault(); var b = document.querySelector('[data-act="cuAdd"]'); if (b) b.click(); }
+  if (e.key === "Escape") { $("help").hidden = true; }
+});
+
+document.addEventListener("visibilitychange", function () { if (!document.hidden) { tick(); render(); } });
+
+async function init() {
+  renderLegend();
+  render();
+  setInterval(tick, 500);
+  setTimeout(function () { if (mode === "pending") { showEscape = true; render(); } }, 3500);
+  var db = null, user = null;
+  try {
+    if (window.claude && typeof window.claude.use === "function") {
+      db = await window.claude.use("db");
+      user = await window.claude.use("user");
+    }
+  } catch (e) { db = null; }
+  if (!db) { startLocalMode(); return; }
+  mode = "sync";
+  try { uid = user ? await user.id() : null; } catch (e) { uid = null; }
+  if (!uid) uid = deviceId();
+  try {
+    var can = user ? await user.can("data.write") : null;
+    if (can === false) readOnly = true;
+  } catch (e) { /* unknown, let a write decide */ }
+  try {
+    ref = db.doc("game/main");
+    unsub = ref.onSnapshot(onSnapshot, function () { syncError = true; render(); });
+    Chat.start(db);
+  } catch (e) { startLocalMode(); }
+}
+
+init();
+
+
+
+})();
+</script>
+</body>
+</html>
